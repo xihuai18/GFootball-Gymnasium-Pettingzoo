@@ -3,7 +3,7 @@ pygame>=1.9.6
 opencv-python
 psutil
 numpy
-gym
+gymnasium
 absl-py
 wheel
 six
