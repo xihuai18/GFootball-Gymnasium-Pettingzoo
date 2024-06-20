@@ -23,7 +23,7 @@ import collections
 import cv2
 from gfootball.env import football_action_set
 from gfootball.env import observation_preprocessing
-import gym
+import gymnasium as gym
 import numpy as np
 
 

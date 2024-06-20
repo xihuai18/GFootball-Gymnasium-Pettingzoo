@@ -26,7 +26,7 @@ from gfootball.eval_server.proto import game_server_pb2_grpc
 from gfootball.eval_server.proto import master_pb2
 from gfootball.eval_server.proto import master_pb2_grpc
 import grpc
-import gym
+import gymnasium as gym
 import numpy as np
 
 

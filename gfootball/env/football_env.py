@@ -28,7 +28,7 @@ from gfootball.env import constants
 from gfootball.env import football_action_set
 from gfootball.env import football_env_core
 from gfootball.env import observation_rotation
-import gym
+import gymnasium as gym
 import numpy as np
 
 
@@ -180,14 +180,15 @@ class FootballEnv(gym.Env):
                 [-reward] * self._agent.num_controlled_right_players())
     self._cached_observation = None
     info['score_reward'] = score_reward
-    return (self.observation(), np.array(reward, dtype=np.float32), done, info)
+    # Whether truncated depends on the reward design, since default the "scoring" is used, False is returned.
+    return (self.observation(), np.array(reward, dtype=np.float32), done, False, info)
 
-  def reset(self):
+  def reset(self, seed=None, options=None):
     self._env.reset()
     for player in self._players:
       player.reset()
     self._cached_observation = None
-    return self.observation()
+    return self.observation(), {}
 
   def observation(self):
     if not self._cached_observation:
