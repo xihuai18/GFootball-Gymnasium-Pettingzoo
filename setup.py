@@ -185,9 +185,10 @@ setup(
         'opencv-python',
         'psutil',
         'numpy',
-        'gym<=0.21.0',
+        'gym',
         'absl-py',
         'wheel',
+        'six'
     ],
     include_package_data=True,
     keywords='gfootball reinforcement-learning python machine learning',

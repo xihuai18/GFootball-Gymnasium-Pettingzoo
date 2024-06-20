@@ -65,9 +65,16 @@ include_directories(${SDL2_IMAGE_DIRS})
 include_directories(${SDL2_TTF_DIRS})
 include_directories(${SDL2_GFX_DIRS})
 
+if(DEFINED ENV{CONDA_PREFIX})
+  execute_process(
+    COMMAND python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
+    OUTPUT_VARIABLE PYTHON_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+endif()
 if(UNIX)
   if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.12")
-    find_package(Python COMPONENTS Development REQUIRED)
+    find_package(Python ${PYTHON_VERSION} COMPONENTS Interpreter Development REQUIRED)
   else()
     # Starting from CMake 3.12 FindPythonLibs was deprecated in favour of FindPython.
     # But Ubuntu 18.04 and other older distributions are shipped with CMake version < 3.12,
