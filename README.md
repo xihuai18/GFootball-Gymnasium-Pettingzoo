@@ -1,5 +1,7 @@
 # Google Research Football with Gymnasium and PettingZoo Compatibility
 
+## Installation
+
 ```shell
 # system dependence
 sudo apt-get install git cmake build-essential libgl1-mesa-dev libsdl2-dev \
@@ -16,4 +18,11 @@ Other installation problems may be found in the original [README](https://github
 
 ```shell
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7 
+```
+
+## Test
+
+```shell
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7 
+python -c "import gfootball.env as football_env; env = football_env.create_environment('academy_3_vs_1_with_keeper'); print(env.reset()); print(env.step([0]))"
 ```
