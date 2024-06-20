@@ -24,5 +24,5 @@ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7
 
 ```shell
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7 
-python -c "import gfootball.env as football_env; env = football_env.create_environment('academy_3_vs_1_with_keeper'); print(env.reset()); print(env.step([0]))"
+python -c "import gymnasium as gym; import gfootball; env = gym.make('GFootball-academy_3_vs_1_with_keeper-simple115v2-v0'); print(env.reset()); print(env.step([0]))"
 ```
