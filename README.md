@@ -1,5 +1,7 @@
 # Google Research Football with Gymnasium and PettingZoo Compatibility
 
+Update `CMakeLists.txt` and make gfootball easier to install in virtual python environments.
+
 ## Installation
 
 ```shell
