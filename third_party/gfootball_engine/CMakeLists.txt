@@ -79,7 +79,7 @@ if(UNIX)
     # Starting from CMake 3.12 FindPythonLibs was deprecated in favour of FindPython.
     # But Ubuntu 18.04 and other older distributions are shipped with CMake version < 3.12,
     # so we have to support the old behaviour for some time.
-    find_package(PythonLibs 3 REQUIRED)
+    find_package(PythonLibs ${PYTHON_VERSION} REQUIRED)
     string(REPLACE "." ";" VERSION_LIST ${PYTHONLIBS_VERSION_STRING})
     list(GET VERSION_LIST 0 Python_VERSION_MAJOR)
     list(GET VERSION_LIST 1 Python_VERSION_MINOR)
