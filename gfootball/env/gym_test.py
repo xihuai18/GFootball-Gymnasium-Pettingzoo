@@ -15,9 +15,7 @@
 
 """GFootball environment using OpenAI Gym test."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import unittest
 
@@ -27,19 +25,18 @@ from absl.testing import parameterized
 
 class GymTest(parameterized.TestCase):
 
-  @parameterized.parameters(('scoring'), ('scoring,checkpoints'))
-  def test_environment(self, rewards):
-    # Tests it is possible to create and run an environment twice.
-    for _ in range(2):
-      env = gym.make('gfootball:GFootball-11_vs_11_easy_stochastic-SMM-v0',
-                     stacked=True, rewards=rewards)
-      env.reset()
-      for _ in range(10):
-        _, _, done, _ = env.step(env.action_space.sample())
-        if done:
-          env.reset()
-      env.close()
+    @parameterized.parameters(("scoring"), ("scoring,checkpoints"))
+    def test_environment(self, rewards):
+        # Tests it is possible to create and run an environment twice.
+        for _ in range(2):
+            env = gym.make("gfootball:GFootball-11_vs_11_easy_stochastic-SMM-v0", stacked=True, rewards=rewards)
+            env.reset()
+            for _ in range(10):
+                _, _, done, _ = env.step(env.action_space.sample())
+                if done:
+                    env.reset()
+            env.close()
 
 
-if __name__ == '__main__':
-  unittest.main()
+if __name__ == "__main__":
+    unittest.main()

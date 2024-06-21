@@ -19,46 +19,41 @@ gfootball_impala_cnn is architecture used in the paper
 It is illustrated in the appendix. It is similar to Large architecture
 from IMPALA paper; we use 4 big blocks instead of 3 though.
 """
-from baselines.common.models import register
 import sonnet as snt
 import tensorflow.compat.v1 as tf
+from baselines.common.models import register
 
 
-@register('gfootball_impala_cnn')
+@register("gfootball_impala_cnn")
 def gfootball_impala_cnn():
-  def network_fn(frame):
-    # Convert to floats.
-    frame = tf.to_float(frame)
-    frame /= 255
-    with tf.variable_scope('convnet'):
-      conv_out = frame
-      conv_layers = [(16, 2), (32, 2), (32, 2), (32, 2)]
-      for i, (num_ch, num_blocks) in enumerate(conv_layers):
-        # Downscale.
-        conv_out = snt.Conv2D(num_ch, 3, stride=1, padding='SAME')(conv_out)
-        conv_out = tf.nn.pool(
-            conv_out,
-            window_shape=[3, 3],
-            pooling_type='MAX',
-            padding='SAME',
-            strides=[2, 2])
+    def network_fn(frame):
+        # Convert to floats.
+        frame = tf.to_float(frame)
+        frame /= 255
+        with tf.variable_scope("convnet"):
+            conv_out = frame
+            conv_layers = [(16, 2), (32, 2), (32, 2), (32, 2)]
+            for i, (num_ch, num_blocks) in enumerate(conv_layers):
+                # Downscale.
+                conv_out = snt.Conv2D(num_ch, 3, stride=1, padding="SAME")(conv_out)
+                conv_out = tf.nn.pool(conv_out, window_shape=[3, 3], pooling_type="MAX", padding="SAME", strides=[2, 2])
 
-        # Residual block(s).
-        for j in range(num_blocks):
-          with tf.variable_scope('residual_%d_%d' % (i, j)):
-            block_input = conv_out
-            conv_out = tf.nn.relu(conv_out)
-            conv_out = snt.Conv2D(num_ch, 3, stride=1, padding='SAME')(conv_out)
-            conv_out = tf.nn.relu(conv_out)
-            conv_out = snt.Conv2D(num_ch, 3, stride=1, padding='SAME')(conv_out)
-            conv_out += block_input
+                # Residual block(s).
+                for j in range(num_blocks):
+                    with tf.variable_scope("residual_%d_%d" % (i, j)):
+                        block_input = conv_out
+                        conv_out = tf.nn.relu(conv_out)
+                        conv_out = snt.Conv2D(num_ch, 3, stride=1, padding="SAME")(conv_out)
+                        conv_out = tf.nn.relu(conv_out)
+                        conv_out = snt.Conv2D(num_ch, 3, stride=1, padding="SAME")(conv_out)
+                        conv_out += block_input
 
-    conv_out = tf.nn.relu(conv_out)
-    conv_out = snt.BatchFlatten()(conv_out)
+        conv_out = tf.nn.relu(conv_out)
+        conv_out = snt.BatchFlatten()(conv_out)
 
-    conv_out = snt.Linear(256)(conv_out)
-    conv_out = tf.nn.relu(conv_out)
+        conv_out = snt.Linear(256)(conv_out)
+        conv_out = tf.nn.relu(conv_out)
 
-    return conv_out
+        return conv_out
 
-  return network_fn
+    return network_fn

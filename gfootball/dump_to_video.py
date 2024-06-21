@@ -14,18 +14,18 @@
 
 """Script allowing to render a replay video from a game dump."""
 
-from absl import app
-from absl import flags
+from absl import app, flags
+
 from gfootball.env import script_helpers
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('trace_file', None, 'Trace file to render')
-flags.mark_flag_as_required('trace_file')
+flags.DEFINE_string("trace_file", None, "Trace file to render")
+flags.mark_flag_as_required("trace_file")
 
 
 def main(_):
-  script_helpers.ScriptHelpers().dump_to_video(FLAGS.trace_file)
+    script_helpers.ScriptHelpers().dump_to_video(FLAGS.trace_file)
 
 
-if __name__ == '__main__':
-  app.run(main)
+if __name__ == "__main__":
+    app.run(main)

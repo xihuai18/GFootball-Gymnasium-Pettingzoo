@@ -13,19 +13,15 @@
 # limitations under the License.
 
 
-
-
-
-
 from . import *
 
 
 def build_scenario(builder):
-  builder.config().game_duration = 10
-  builder.config().second_half = 5
-  builder.SetTeam(Team.e_Left)
-  builder.AddPlayer(-1.000000, 0.000000, e_PlayerRole_GK, lazy=True)
-  builder.AddPlayer(0.000000, 0.020000, e_PlayerRole_RM, lazy=True)
-  builder.SetTeam(Team.e_Right)
-  builder.AddPlayer(-1.000000, 0.000000, e_PlayerRole_GK, lazy=True)
-  builder.AddPlayer(-0.500000, 0.000000, e_PlayerRole_RM, lazy=True)
+    builder.config().game_duration = 10
+    builder.config().second_half = 5
+    builder.SetTeam(Team.e_Left)
+    builder.AddPlayer(-1.000000, 0.000000, e_PlayerRole_GK, lazy=True)
+    builder.AddPlayer(0.000000, 0.020000, e_PlayerRole_RM, lazy=True)
+    builder.SetTeam(Team.e_Right)
+    builder.AddPlayer(-1.000000, 0.000000, e_PlayerRole_GK, lazy=True)
+    builder.AddPlayer(-0.500000, 0.000000, e_PlayerRole_RM, lazy=True)

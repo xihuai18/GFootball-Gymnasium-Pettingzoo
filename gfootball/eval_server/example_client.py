@@ -19,87 +19,88 @@ It creates remote football game with given credentials and plays a few games.
 
 import random
 
-from absl import app
-from absl import flags
-from absl import logging
-import gfootball.env as football_env
-from gfootball.env import football_action_set
 import grpc
 import numpy as np
 import tensorflow.compat.v2 as tf
+from absl import app, flags, logging
+
+import gfootball.env as football_env
+from gfootball.env import football_action_set
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('username', None, 'Username to use')
-flags.mark_flag_as_required('username')
-flags.DEFINE_string('token', None, 'Token to use.')
-flags.DEFINE_integer('how_many', 1000, 'How many games to play')
-flags.DEFINE_bool('render', False, 'Whether to render a game.')
-flags.DEFINE_string('track', '', 'Name of the competition track.')
-flags.DEFINE_string('model_name', '',
-                    'A model identifier to be displayed on the leaderboard.')
-flags.DEFINE_string('inference_model', '',
-                    'A path to an inference model. Empty for random actions')
+flags.DEFINE_string("username", None, "Username to use")
+flags.mark_flag_as_required("username")
+flags.DEFINE_string("token", None, "Token to use.")
+flags.DEFINE_integer("how_many", 1000, "How many games to play")
+flags.DEFINE_bool("render", False, "Whether to render a game.")
+flags.DEFINE_string("track", "", "Name of the competition track.")
+flags.DEFINE_string("model_name", "", "A model identifier to be displayed on the leaderboard.")
+flags.DEFINE_string("inference_model", "", "A path to an inference model. Empty for random actions")
 
-NUM_ACTIONS = len(football_action_set.action_set_dict['default'])
+NUM_ACTIONS = len(football_action_set.action_set_dict["default"])
 
 
 def random_actions(obs):
-  num_players = 1 if len(obs.shape) == 3 else obs.shape[0]
-  a = []
-  for _ in range(num_players):
-    a.append(random.randint(0, NUM_ACTIONS - 1))
-  return a
+    num_players = 1 if len(obs.shape) == 3 else obs.shape[0]
+    a = []
+    for _ in range(num_players):
+        a.append(random.randint(0, NUM_ACTIONS - 1))
+    return a
 
 
 def seed_rl_preprocessing(observation):
-  observation = np.expand_dims(observation, axis=0)
-  data = np.packbits(observation, axis=-1)  # This packs to uint8
-  if data.shape[-1] % 2 == 1:
-    data = np.pad(data, [(0, 0)] * (data.ndim - 1) + [(0, 1)], 'constant')
-  return data.view(np.uint16)
+    observation = np.expand_dims(observation, axis=0)
+    data = np.packbits(observation, axis=-1)  # This packs to uint8
+    if data.shape[-1] % 2 == 1:
+        data = np.pad(data, [(0, 0)] * (data.ndim - 1) + [(0, 1)], "constant")
+    return data.view(np.uint16)
 
 
 def generate_actions(obs, model):
-  a = []
-  # Single agent case
-  if len(obs.shape) == 3:
-    a.append(model(seed_rl_preprocessing(obs))[0][0].numpy())
-  else:
-    # Multiagent -> first dimension is a number of agents you control.
-    for x in range(obs.shape[0]):
-      a.append(model(seed_rl_preprocessing(obs[x]))[0][0].numpy())
-  return a
+    a = []
+    # Single agent case
+    if len(obs.shape) == 3:
+        a.append(model(seed_rl_preprocessing(obs))[0][0].numpy())
+    else:
+        # Multiagent -> first dimension is a number of agents you control.
+        for x in range(obs.shape[0]):
+            a.append(model(seed_rl_preprocessing(obs[x]))[0][0].numpy())
+    return a
 
 
 def get_inference_model(inference_model):
-  if not inference_model or FLAGS.username == 'random':
-    return random_actions
-  model = tf.saved_model.load(inference_model)
-  return lambda obs: generate_actions(obs, model)
+    if not inference_model or FLAGS.username == "random":
+        return random_actions
+    model = tf.saved_model.load(inference_model)
+    return lambda obs: generate_actions(obs, model)
 
 
 def main(unused_argv):
-  model = get_inference_model(FLAGS.inference_model)
-  env = football_env.create_remote_environment(
-      FLAGS.username, FLAGS.token, FLAGS.model_name, track=FLAGS.track,
-      representation='extracted', stacked=True,
-      include_rendering=FLAGS.render)
-  for _ in range(FLAGS.how_many):
-    ob = env.reset()
-    cnt = 1
-    done = False
-    while not done:
-      try:
-        action = model(ob)
-        ob, rew, done, _ = env.step(action)
-        logging.info('Playing the game, step %d, action %s, rew %s, done %d',
-                     cnt, action, rew, done)
-        cnt += 1
-      except grpc.RpcError as e:
-        print(e)
-        break
-    print('=' * 50)
+    model = get_inference_model(FLAGS.inference_model)
+    env = football_env.create_remote_environment(
+        FLAGS.username,
+        FLAGS.token,
+        FLAGS.model_name,
+        track=FLAGS.track,
+        representation="extracted",
+        stacked=True,
+        include_rendering=FLAGS.render,
+    )
+    for _ in range(FLAGS.how_many):
+        ob = env.reset()
+        cnt = 1
+        done = False
+        while not done:
+            try:
+                action = model(ob)
+                ob, rew, done, _ = env.step(action)
+                logging.info("Playing the game, step %d, action %s, rew %s, done %d", cnt, action, rew, done)
+                cnt += 1
+            except grpc.RpcError as e:
+                print(e)
+                break
+        print("=" * 50)
 
 
-if __name__ == '__main__':
-  app.run(main)
+if __name__ == "__main__":
+    app.run(main)

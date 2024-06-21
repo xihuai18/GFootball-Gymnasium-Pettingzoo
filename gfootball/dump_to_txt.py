@@ -20,28 +20,24 @@
 
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
-from absl import app
-from absl import flags
+from absl import app, flags
+
 from gfootball.env import script_helpers
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string('trace_file', None, 'Trace file to convert')
-flags.DEFINE_string('output', None, 'Output txt file')
-flags.DEFINE_bool('include_debug', True,
-                  'Include debug information for each step')
-flags.mark_flag_as_required('trace_file')
-flags.mark_flag_as_required('output')
+flags.DEFINE_string("trace_file", None, "Trace file to convert")
+flags.DEFINE_string("output", None, "Output txt file")
+flags.DEFINE_bool("include_debug", True, "Include debug information for each step")
+flags.mark_flag_as_required("trace_file")
+flags.mark_flag_as_required("output")
 
 
 def main(_):
-  script_helpers.ScriptHelpers().dump_to_txt(FLAGS.trace_file, FLAGS.output,
-                                             FLAGS.include_debug)
+    script_helpers.ScriptHelpers().dump_to_txt(FLAGS.trace_file, FLAGS.output, FLAGS.include_debug)
 
 
-if __name__ == '__main__':
-  app.run(main)
+if __name__ == "__main__":
+    app.run(main)

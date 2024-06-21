@@ -13,24 +13,20 @@
 # limitations under the License.
 
 
-
-
-
-
 from . import *
 
 
 def build_scenario(builder):
-  builder.config().game_duration = 30
-  builder.config().deterministic = False
-  if builder.EpisodeNumber() % 2 == 0:
-    builder.SetBallPosition(-0.9, 0.3)
-  else:
-    builder.SetBallPosition(0.9, -0.3)
-  builder.SetTeam(Team.e_Left)
-  builder.AddPlayer(-1.00, 0.00, e_PlayerRole_GK, True)
-  builder.AddPlayer(-0.85, 0.30, e_PlayerRole_RM, True)
-  builder.AddPlayer(0.00, 0.00, e_PlayerRole_RM, True)
-  builder.SetTeam(Team.e_Right)
-  builder.AddPlayer(-1.00, 0.00, e_PlayerRole_GK, True)
-  builder.AddPlayer(-0.85, 0.30, e_PlayerRole_RM, True)
+    builder.config().game_duration = 30
+    builder.config().deterministic = False
+    if builder.EpisodeNumber() % 2 == 0:
+        builder.SetBallPosition(-0.9, 0.3)
+    else:
+        builder.SetBallPosition(0.9, -0.3)
+    builder.SetTeam(Team.e_Left)
+    builder.AddPlayer(-1.00, 0.00, e_PlayerRole_GK, True)
+    builder.AddPlayer(-0.85, 0.30, e_PlayerRole_RM, True)
+    builder.AddPlayer(0.00, 0.00, e_PlayerRole_RM, True)
+    builder.SetTeam(Team.e_Right)
+    builder.AddPlayer(-1.00, 0.00, e_PlayerRole_GK, True)
+    builder.AddPlayer(-0.85, 0.30, e_PlayerRole_RM, True)

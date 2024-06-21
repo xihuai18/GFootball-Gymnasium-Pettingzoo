@@ -15,14 +15,13 @@
 """Config values like number of instances, ports, etc."""
 
 grpc_port = 50000
-master_address_bucket = 'grf_public'
-master_address_file = 'eval_server_master_ip'
-master_address_public_path = 'https://storage.googleapis.com/{}/{}'.format(
-    master_address_bucket, master_address_file)
-game_version = '2.0'
+master_address_bucket = "grf_public"
+master_address_file = "eval_server_master_ip"
+master_address_public_path = "https://storage.googleapis.com/{}/{}".format(master_address_bucket, master_address_file)
+game_version = "2.0"
 
 track_to_num_controlled_players = {
-    'mini': 1,
-    '11vs11': 1,
-    'multiagent': 4,
+    "mini": 1,
+    "11vs11": 1,
+    "multiagent": 4,
 }

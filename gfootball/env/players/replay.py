@@ -14,25 +14,25 @@
 
 """Player with actions coming from specific game replay."""
 
-from gfootball.env import player_base
-from gfootball.env import script_helpers
+from gfootball.env import player_base, script_helpers
 
 
 class Player(player_base.PlayerBase):
-  """Player with actions coming from specific game replay."""
+    """Player with actions coming from specific game replay."""
 
-  def __init__(self, player_config, env_config):
-    player_base.PlayerBase.__init__(self, player_config)
-    self._can_play_right = True
-    self._replay = script_helpers.ScriptHelpers().load_dump(player_config['path'])
-    self._step = 0
-    self._player = player_config['index']
+    def __init__(self, player_config, env_config):
+        player_base.PlayerBase.__init__(self, player_config)
+        self._can_play_right = True
+        self._replay = script_helpers.ScriptHelpers().load_dump(player_config["path"])
+        self._step = 0
+        self._player = player_config["index"]
 
-  def take_action(self, observations):
-    if self._step == len(self._replay):
-      print("Replay finished.")
-      exit(0)
-    actions = self._replay[self._step]['debug']['action'][
-        self._player:self.num_controlled_players() + self._player]
-    self._step += 1
-    return actions
+    def take_action(self, observations):
+        if self._step == len(self._replay):
+            print("Replay finished.")
+            exit(0)
+        actions = self._replay[self._step]["debug"]["action"][
+            self._player : self.num_controlled_players() + self._player
+        ]
+        self._step += 1
+        return actions

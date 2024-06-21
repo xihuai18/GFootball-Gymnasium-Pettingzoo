@@ -22,31 +22,31 @@ _controllers = []
 
 
 def add_controller(controller_kind, controller_index=None):
-  global _controllers
-  _controllers.append((controller_kind, controller_index))
+    global _controllers
+    _controllers.append((controller_kind, controller_index))
 
 
 def fits(event, controller_kind, controller_index):
-  if controller_kind == 'keyboard':
-    return event.type in KEYBOARD_EVENTS
-  if controller_kind == 'gamepad':
-    return event.type in GAMEPAD_EVENTS and event.joy == controller_index
-  assert False, 'Unknown controller kind!'
+    if controller_kind == "keyboard":
+        return event.type in KEYBOARD_EVENTS
+    if controller_kind == "gamepad":
+        return event.type in GAMEPAD_EVENTS and event.joy == controller_index
+    assert False, "Unknown controller kind!"
 
 
 def get(controller_kind, controller_index=None):
-  global _queue
-  global _controllers
-  _queue.extend(pygame.event.get())
-  result = []
-  new_state = []
-  for event in _queue:
-    if fits(event, controller_kind, controller_index):
-      result.append(event)
-    else:
-      for controller in _controllers:
-        if fits(event, *controller):
-          new_state.append(event)
-          break
-  _queue = new_state
-  return result
+    global _queue
+    global _controllers
+    _queue.extend(pygame.event.get())
+    result = []
+    new_state = []
+    for event in _queue:
+        if fits(event, controller_kind, controller_index):
+            result.append(event)
+        else:
+            for controller in _controllers:
+                if fits(event, *controller):
+                    new_state.append(event)
+                    break
+    _queue = new_state
+    return result

@@ -13,20 +13,16 @@
 # limitations under the License.
 
 
-
-
-
-
 from . import *
 
 
 def build_scenario(builder):
-  builder.config().game_duration = 400
-  builder.config().right_team_difficulty = 0.6
-  builder.config().deterministic = True
-  builder.SetTeam(Team.e_Left)
-  builder.AddPlayer(1.000000, 0.000000, e_PlayerRole_GK)
-  builder.AddPlayer(0.800000, 0.000000, e_PlayerRole_RM)
-  builder.SetTeam(Team.e_Right)
-  builder.AddPlayer(-1.000000, 0.000000, e_PlayerRole_GK)
-  builder.AddPlayer(0.000000, 0.020000, e_PlayerRole_RM)
+    builder.config().game_duration = 400
+    builder.config().right_team_difficulty = 0.6
+    builder.config().deterministic = True
+    builder.SetTeam(Team.e_Left)
+    builder.AddPlayer(1.000000, 0.000000, e_PlayerRole_GK)
+    builder.AddPlayer(0.800000, 0.000000, e_PlayerRole_RM)
+    builder.SetTeam(Team.e_Right)
+    builder.AddPlayer(-1.000000, 0.000000, e_PlayerRole_GK)
+    builder.AddPlayer(0.000000, 0.020000, e_PlayerRole_RM)

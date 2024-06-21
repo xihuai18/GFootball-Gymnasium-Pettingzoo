@@ -13,15 +13,11 @@
 # limitations under the License.
 
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import logging
 import os
 import sys
-
-
 
 game_path = os.path.dirname(os.path.abspath(__file__))
 if game_path not in sys.path:
