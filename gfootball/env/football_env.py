@@ -180,7 +180,9 @@ class FootballEnv(gym.Env):
         return (self.observation(), np.array(reward, dtype=np.float32), done, False, info)
 
     def reset(self, seed=None, options=None):
-        self._env.reset()
+        super().reset(seed=seed, options=options)
+        self._env.reset(game_engine_random_seed=self.np_random.integers(0, 2000000000, dtype=int))
+        # self._env.reset()
         for player in self._players:
             player.reset()
         self._cached_observation = None

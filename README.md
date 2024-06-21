@@ -6,6 +6,11 @@
 
 Update `CMakeLists.txt` and make gfootball easier to install in virtual python environments.
 
+### Compatibility with Gymnasium
+
+- Modify `step` to return `terminated` and `truncated`.
+- Modify `reset` to maintain a consistent `np_random` in the environment. Refer to <https://gymnasium.farama.org/api/env/#gymnasium.Env.reset>.
+
 ### Compact Representation for Academy Scenarios
 See [gfootball/env/\_\_init\_\_.py](./gfootball/__init__.py):
 
@@ -23,7 +28,7 @@ It holds:
     - (x,y) direction of other left team players, size (n1-1) * 2
     - (x,y) coordinates of right team players, size n2 * 2
     - (x,y) direction of right team players, size n2 * 2 
-    - (x,y,z) - ball position
+    - (x,y,z) ball position
     - (Δx,Δy,Δz) ball direction
     - one hot encoding of ball ownership (noone, left, right)
     - one hot encoding of `game_mode`

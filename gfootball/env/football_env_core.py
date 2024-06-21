@@ -32,8 +32,8 @@ import numpy as np
 import six.moves.cPickle
 from six.moves import range
 
-from gfootball.env import config as cfg
-from gfootball.env import constants, football_action_set, observation_processor
+from gfootball.env import config
+from gfootball.env import football_action_set, observation_processor
 
 _unused_engines = []
 _unused_rendering_engine = None
@@ -55,7 +55,7 @@ class EnvState(object):
 
 class FootballEnvCore(object):
 
-    def __init__(self, config):
+    def __init__(self, config: config.Config):
         global _unused_engines
         self._config = config
         self._sticky_actions = football_action_set.get_sticky_actions(config)
@@ -101,7 +101,7 @@ class FootballEnvCore(object):
         ).format(scenario_config.controllable_left_players, scenario_config.controllable_right_players)
         self._env.reset(scenario_config, animations)
 
-    def reset(self, inc=1):
+    def reset(self, inc=1, game_engine_random_seed: int = None):
         """Reset environment for a new episode using a given config."""
         self._episode_start = timeit.default_timer()
         self._action_set = football_action_set.get_action_set(self._config)
@@ -109,6 +109,8 @@ class FootballEnvCore(object):
         self._cumulative_reward = 0
         self._step_count = 0
         self._trace = trace
+        if game_engine_random_seed is not None:
+            self._config.update({"game_engine_random_seed": game_engine_random_seed})
         self._reset(self._env.game_config.render, inc=inc)
         while not self._retrieve_observation():
             self._env.step()
