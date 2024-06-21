@@ -10,6 +10,7 @@ libdirectfb-dev libst-dev mesa-utils xvfb x11vnc
 # pip dependence
 pip install -U pip setuptools psutil wheel
 conda install anaconda::py-boost -y
+# install gfootball
 pip install git+https://github.com/xihuai18/gfootball-gymnasium.git
 ```
 Other installation problems may be found in the original [README](https://github.com/google-research/football).
