@@ -22,8 +22,8 @@ import collections
 import cv2
 import gymnasium as gym
 import numpy as np
-
 from gfootball.env import football_action_set, observation_preprocessing
+from typing import List
 
 
 class GetStateWrapper(gym.Wrapper):
@@ -90,6 +90,92 @@ class PeriodicDumpWriter(gym.Wrapper):
                 self.env.disable_render()
         self._current_episode_number += 1
         return self.env.reset()
+
+
+class SimpleStateWrapper(gym.ObservationWrapper):
+    """A wrapper that is similar to simple115 but remove the padding 0s"""
+
+    def __init__(self, env: gym.Wrapper):
+        """
+        Initializes the wrapper.
+
+        Args:
+          env: an environment to wrap
+        Note: The observation sizes depend on the scenarios
+        """
+        gym.ObservationWrapper.__init__(self, env)
+        action_shape = np.shape(self.env.action_space)
+        num_left_agents = len(list(self.env.unwrapped._env._env.config.left_team))
+        num_right_agents = len(list(self.env.unwrapped._env._env.config.right_team))
+        shape = (action_shape[0] if len(action_shape) else 1, (7 * num_left_agents + 6 * num_right_agents + 18))
+        self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=shape, dtype=np.float32)
+
+    def observation(self, observation: List[dict]) -> np.ndarray:
+        return SimpleStateWrapper.convert_observation(observation)
+
+    @staticmethod
+    def convert_observation(observation_dicts: List[dict]) -> np.ndarray:
+        """
+        2 - (x,y) coordinate of current player
+        2 - (x,y) direction of current player
+        2 - (is_sprinting, is_dribbling) agent status
+        (n1-1) * 2 - (Δx,Δy) relative coordinates of other left team players
+        n2 * 2 - (Δx,Δy) relative coordinates of right team players
+        2 - (Δx,Δy) relative coordinate of current player to the ball
+
+        (n1-1) * 2 - (x,y) coordinates of other left team players
+        (n1-1) * 2 - (x,y) direction of other left team players
+        n2 * 2 - (x,y) coordinates of right team players
+        n2 * 2 - (x,y) direction of right team players
+
+        3 - (x,y,z) - ball position
+        3 - ball direction
+        3 - one hot encoding of ball ownership (noone, left, right)
+
+        7 - one hot encoding of `game_mode`
+        n1 - one hot encoding of which player is active  (agent id)
+        dim:
+            4 * 2 + (n1-1) * 2 * 3 + n2 * 2 * 3 + 3 + 3 + 3 + n1 + 7
+            = 7 * n1 + 6 * n2 + 18
+        """
+
+        def do_flatten(obj):
+            """Run flatten on either python list or numpy array."""
+            if isinstance(obj, list):
+                return np.array(obj).flatten()
+            return obj.flatten()
+
+        all_feats = []
+        for obs_dict in observation_dicts:
+            p_i = obs_dict["active"]
+            feat = []
+            feat.extend(do_flatten(obs_dict["left_team"][p_i]))
+            feat.extend(do_flatten(obs_dict["left_team_direction"][p_i]))
+            feat.extend([obs_dict["sticky_actions"][8], obs_dict["sticky_actions"][9]])
+            feat.extend(do_flatten(np.delete(obs_dict["left_team"], p_i, axis=0) - obs_dict["left_team"][p_i]))
+            feat.extend(do_flatten(obs_dict["right_team"] - obs_dict["left_team"][p_i]))
+            feat.extend(do_flatten(obs_dict["ball"][:2] - obs_dict["left_team"][p_i]))
+
+            feat.extend(do_flatten(np.delete(obs_dict["left_team"], p_i, axis=0)))
+            feat.extend(do_flatten(np.delete(obs_dict["left_team_direction"], p_i, axis=0)))
+            feat.extend(do_flatten(obs_dict["right_team"]))
+            feat.extend(do_flatten(obs_dict["right_team_direction"]))
+
+            feat.extend(do_flatten(obs_dict["ball"]))
+            feat.extend(do_flatten(obs_dict["ball_direction"]))
+            if obs_dict["ball_owned_team"] == -1:
+                feat.extend([1, 0, 0])
+            if obs_dict["ball_owned_team"] == 0:
+                feat.extend([0, 1, 0])
+            if obs_dict["ball_owned_team"] == 1:
+                feat.extend([0, 0, 1])
+
+            feat.extend(do_flatten(np.eye(7)[obs_dict["game_mode"]]))
+            feat.extend(do_flatten(np.eye(len(obs_dict["left_team"]))[p_i]))
+            feat = np.array(feat, dtype=np.float32)
+
+            all_feats.append(feat)
+        return all_feats
 
 
 class Simple115StateWrapper(gym.ObservationWrapper):

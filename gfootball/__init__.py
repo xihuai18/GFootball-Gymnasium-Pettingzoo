@@ -45,6 +45,12 @@ for env_name in scenario_builder.all_scenarios():
     )
 
     register(
+        id="GFootball/{env_name}-simplev1-v0".format(env_name=env_name),
+        entry_point="gfootball.env:create_environment",
+        kwargs={"env_name": env_name, "representation": "simplev1"},
+    )
+
+    register(
         id="GFootball/{env_name}-raw-v0".format(env_name=env_name),
         entry_point="gfootball.env:create_environment",
         kwargs={"env_name": env_name, "representation": "raw"},

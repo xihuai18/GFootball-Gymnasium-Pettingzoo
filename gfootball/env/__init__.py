@@ -43,6 +43,8 @@ def _process_representation_wrappers(env, representation, channel_dimensions):
         env = wrappers.Simple115StateWrapper(env)
     elif representation == "simple115v2":
         env = wrappers.Simple115StateWrapper(env, True)
+    elif representation == "simplev1":
+        env = wrappers.SimpleStateWrapper(env)
     elif representation == "extracted":
         env = wrappers.SMMWrapper(env, channel_dimensions)
     elif representation == "raw":
@@ -144,6 +146,27 @@ def create_environment(
               CornerMode, ThrowInMode, PenaltyMode}.
            Can only be used when the scenario is a flavor of normal game
            (i.e. 11 versus 11 players).
+          'simplev1': a compact simple representation, adapted from https://github.com/YuriCat/TamakEriFever, which is the implementation of 5th place solution in [gfootball Kaggle Competition](https://www.kaggle.com/c/google-football/discussion/203412).
+          NOTE: this representation is only designed for cooperative MARL in academy scenarios.
+            It holds:
+             - (x,y) coordinate of current player
+             - (x,y) direction of current player
+             - (is_sprinting, is_dribbling) agent status
+             - (Δx,Δy) relative coordinates of other left team players, size (n1-1) * 2 
+             - (Δx,Δy) relative coordinates of right team players, size n2 * 2
+             - (Δx,Δy) relative coordinate of current player to the ball
+             - (x,y) coordinates of other left team players, size (n1-1) * 2 
+             - (x,y) direction of other left team players, size (n1-1) * 2
+             - (x,y) coordinates of right team players, size n2 * 2
+             - (x,y) direction of right team players, size n2 * 2 
+             - (x,y,z) - ball position
+             - (Δx,Δy,Δz) ball direction
+             - one hot encoding of ball ownership (noone, left, right)
+             - one hot encoding of `game_mode`
+             - one hot encoding of which player is active (agent id), size n1
+            Total dim:
+              4 * 2 + (n1-1) * 2 * 3 + n2 * 2 * 3 + 3 + 3 + 3 + n1 + 7
+              = 7 * n1 + 6 * n2 + 18
       rewards: Comma separated list of rewards to be added.
          Currently supported rewards are 'scoring' and 'checkpoints'.
       write_goal_dumps: whether to dump traces up to 200 frames before goals.
