@@ -32,8 +32,7 @@ import numpy as np
 import six.moves.cPickle
 from six.moves import range
 
-from gfootball.env import config
-from gfootball.env import football_action_set, observation_processor
+from gfootball.env import config, football_action_set, observation_processor
 
 _unused_engines = []
 _unused_rendering_engine = None

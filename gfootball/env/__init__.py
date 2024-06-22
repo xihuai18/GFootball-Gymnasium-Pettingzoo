@@ -54,7 +54,9 @@ def _process_representation_wrappers(env, representation, channel_dimensions):
     return env
 
 
-def _apply_output_wrappers(env, rewards, representation, channel_dimensions, apply_single_agent_wrappers, stacked):
+def _apply_output_wrappers(
+    env, rewards, representation, channel_dimensions, apply_single_agent_wrappers, stacked, action_mask: bool = True
+):
     """Wraps with necessary wrappers modifying the output of the environment.
 
     Args:
@@ -70,6 +72,8 @@ def _apply_output_wrappers(env, rewards, representation, channel_dimensions, app
     """
     env = _process_reward_wrappers(env, rewards)
     env = _process_representation_wrappers(env, representation, channel_dimensions)
+    if action_mask:
+        env = wrappers.ActionMaskWrapper(env)
     if apply_single_agent_wrappers:
         if representation != "raw":
             env = wrappers.SingleAgentObservationWrapper(env)
@@ -152,13 +156,13 @@ def create_environment(
              - (x,y) coordinate of current player
              - (x,y) direction of current player
              - (is_sprinting, is_dribbling) agent status
-             - (Δx,Δy) relative coordinates of other left team players, size (n1-1) * 2 
+             - (Δx,Δy) relative coordinates of other left team players, size (n1-1) * 2
              - (Δx,Δy) relative coordinates of right team players, size n2 * 2
              - (Δx,Δy) relative coordinate of current player to the ball
-             - (x,y) coordinates of other left team players, size (n1-1) * 2 
+             - (x,y) coordinates of other left team players, size (n1-1) * 2
              - (x,y) direction of other left team players, size (n1-1) * 2
              - (x,y) coordinates of right team players, size n2 * 2
-             - (x,y) direction of right team players, size n2 * 2 
+             - (x,y) direction of right team players, size n2 * 2
              - (x,y,z) - ball position
              - (Δx,Δy,Δz) ball direction
              - one hot encoding of ball ownership (noone, left, right)
@@ -246,6 +250,7 @@ def create_environment(
         channel_dimensions,
         (number_of_left_players_agent_controls + number_of_right_players_agent_controls == 1),
         stacked,
+        action_mask=c._values.get("action_mask", True),
     )
     return env
 

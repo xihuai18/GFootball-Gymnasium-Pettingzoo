@@ -38,6 +38,14 @@ Total dim:
     = 7 * n1 + 6 * n2 + 18
 ```
 
+### Action Masks
+
+Action masks based on simple rules are returned as `info["action_mask"]` by default, you can disable by passing `other_config_options={"action_mask":False})` when initializing, e.g.,
+
+```python
+env = gym.make("GFootball/academy_3_vs_1_with_keeper-simplev1-v0", other_config_options={"action_mask":False})
+```
+
 ## Installation
 
 ```shell

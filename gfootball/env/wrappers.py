@@ -18,12 +18,13 @@
 from __future__ import absolute_import, division, print_function
 
 import collections
+from typing import Any, List
 
 import cv2
 import gymnasium as gym
 import numpy as np
+
 from gfootball.env import football_action_set, observation_preprocessing
-from typing import List
 
 
 class GetStateWrapper(gym.Wrapper):
@@ -90,6 +91,111 @@ class PeriodicDumpWriter(gym.Wrapper):
                 self.env.disable_render()
         self._current_episode_number += 1
         return self.env.reset()
+
+
+class ActionMaskWrapper(gym.Wrapper):
+    def __init__(self, env: gym.Env):
+        super().__init__(env)
+        self.action_n = (
+            self.env.action_space.n
+            if isinstance(self.env.action_space, gym.spaces.Discrete)
+            else self.env.action_space.nvec[0]
+        )
+
+    def _get_action_mask(self, observation_dicts: List[dict]) -> List[np.ndarray]:
+        """Return action mask for each player based on simple rules"""
+        action_masks = []
+        for obs_dict in observation_dicts:
+            action_mask = [1] * self.action_n
+
+            a_i = obs_dict["active"]
+
+            (
+                NO_OP,
+                LEFT,
+                TOP_LEFT,
+                TOP,
+                TOP_RIGHT,
+                RIGHT,
+                BOTTOM_RIGHT,
+                BOTTOM,
+                BOTTOM_LEFT,
+                LONG_PASS,
+                HIGH_PASS,
+                SHORT_PASS,
+                SHOT,
+                SPRINT,
+                RELEASE_MOVE,
+                RELEASE_SPRINT,
+                SLIDE,
+                DRIBBLE,
+                RELEASE_DRIBBLE,
+            ) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18)
+
+            if self.action_n == 20:
+                BUILTIN_AI = 19
+
+            if obs_dict["ball_owned_team"] == 1:  # opponents owning ball
+                (
+                    action_mask[LONG_PASS],
+                    action_mask[HIGH_PASS],
+                    action_mask[SHORT_PASS],
+                    action_mask[SHOT],
+                    action_mask[DRIBBLE],
+                ) = (0, 0, 0, 0, 0)
+            elif obs_dict["ball_owned_team"] == 0:  # my team owning ball
+                action_mask[SLIDE] = 0
+
+            if obs_dict["ball_owned_team"] == 0:  # my team owning ball
+                action_mask[SLIDE] = 0
+
+            # Dealing with sticky actions
+            sticky_actions = obs_dict["sticky_actions"]
+            if sticky_actions[8] == 0:  # sprinting
+                action_mask[RELEASE_SPRINT] = 0
+
+            if sticky_actions[9] == 1:  # dribbling
+                action_mask[SLIDE] = 0
+            else:
+                action_mask[RELEASE_DRIBBLE] = 0
+
+            if np.sum(sticky_actions[:8]) == 0:
+                action_mask[RELEASE_MOVE] = 0
+
+            ball_x, _, _ = obs_dict["ball"]
+
+            if obs_dict["game_mode"] == 2 and ball_x < -0.7:  # Our GoalKick
+                action_mask = [1] + [0] * (self.action_n - 1)
+                action_mask[LONG_PASS], action_mask[HIGH_PASS], action_mask[SHORT_PASS] = 1, 1, 1
+
+            elif obs_dict["game_mode"] == 4 and ball_x > 0.9:  # Our CornerKick
+                action_mask = [1] + [0] * (self.action_n - 1)
+                action_mask[LONG_PASS], action_mask[HIGH_PASS], action_mask[SHORT_PASS] = 1, 1, 1
+
+            elif obs_dict["game_mode"] == 6 and ball_x > 0.6:  # Our PenaltyKick
+                action_mask = [1] + [0] * (self.action_n - 1)
+                action_mask[SHOT] = 1
+
+            action_masks.append(np.array(action_mask))
+        return np.stack(action_masks, axis=0)
+
+    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None) -> tuple[Any, dict[str, Any]]:
+        observation, info = super().reset(seed=seed, options=options)
+
+        action_masks = self._get_action_mask(self.env.unwrapped.observation())
+
+        action_masks = action_masks if len(action_masks) > 1 else action_masks[0]
+
+        return observation, info | {"action_masks": action_masks}
+
+    def step(self, action: int | np.ndarray) -> tuple[Any, float, bool, dict[str, Any]]:
+        observation, reward, terminated, truncated, info = super().step(action)
+
+        action_masks = self._get_action_mask(self.env.unwrapped.observation())
+
+        action_masks = action_masks if len(action_masks) > 1 else action_masks[0]
+
+        return observation, reward, terminated, truncated, info | {"action_masks": action_masks}
 
 
 class SimpleStateWrapper(gym.ObservationWrapper):
@@ -175,7 +281,7 @@ class SimpleStateWrapper(gym.ObservationWrapper):
             feat = np.array(feat, dtype=np.float32)
 
             all_feats.append(feat)
-        return all_feats
+        return np.stack(all_feats, axis=0)
 
 
 class Simple115StateWrapper(gym.ObservationWrapper):
