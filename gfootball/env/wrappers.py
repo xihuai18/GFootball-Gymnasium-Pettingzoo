@@ -94,7 +94,15 @@ class PeriodicDumpWriter(gym.Wrapper):
 
 
 class ActionMaskWrapper(gym.Wrapper):
+    """A wrapper that return `action_mask` in info."""
+
     def __init__(self, env: gym.Env):
+        """
+        Initializes the wrapper.
+
+        Args:
+          env: an environment to wrap
+        """
         super().__init__(env)
         self.action_n = (
             self.env.action_space.n
@@ -198,8 +206,73 @@ class ActionMaskWrapper(gym.Wrapper):
         return observation, reward, terminated, truncated, info | {"action_masks": action_masks}
 
 
+class GlobalStateWrapper(gym.Wrapper):
+    """A wrapper that can support `state` function and `state_space` property."""
+
+    def __init__(self, env: gym.Wrapper):
+        """
+        Initializes the wrapper.
+
+        Args:
+          env: an environment to wrap
+        """
+        super().__init__(env)
+        num_left_agents = self.env.unwrapped.engine_config.controllable_left_players
+        num_right_agents = self.env.unwrapped.engine_config.controllable_right_players
+        shape = (
+            4 * (num_left_agents + num_right_agents)
+            + self.env.unwrapped.control_config.number_of_players_agent_controls() * num_left_agents
+            + 16,
+        )
+        self.state_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=shape, dtype=np.float32)
+
+    def state(self) -> np.ndarray:
+        def do_flatten(obj):
+            """Run flatten on either python list or numpy array."""
+            if type(obj) == list:
+                return np.array(obj).flatten()
+            return obj.flatten()
+
+        observation_dicts = self.env.unwrapped.observation()
+        first_obs_dict = observation_dicts[0]
+        player_ids_agent_controls = np.array([obs_dict["active"] for obs_dict in observation_dicts])
+        state = []
+        # n1 * 2 - (x,y) coordinates of left team players
+        # n1 * 2 - (x,y) direction of left team players
+        # n2 * 2 - (x,y) coordinates of right team players
+        # n2 * 2 - (x,y) direction of right team players
+
+        # 3 - (x,y,z) - ball position
+        # 3 - ball direction
+        # 3 - one hot encoding of ball ownership (noone, left, right)
+
+        # 7 - one hot encoding of `game_mode`
+        # n0 * n1 - one hot encoding of which player is active  (controlled agent ids)
+        # dim: 4*(n1+n2) + n0*n1 + 16
+        state.extend(do_flatten(first_obs_dict["left_team"]))
+        state.extend(do_flatten(first_obs_dict["left_team_direction"]))
+        state.extend(do_flatten(first_obs_dict["right_team"]))
+        state.extend(do_flatten(first_obs_dict["right_team_direction"]))
+
+        state.extend(do_flatten(first_obs_dict["ball"]))
+        state.extend(do_flatten(first_obs_dict["ball_direction"]))
+        if first_obs_dict["ball_owned_team"] == -1:
+            state.extend([1, 0, 0])
+        if first_obs_dict["ball_owned_team"] == 0:
+            state.extend([0, 1, 0])
+        if first_obs_dict["ball_owned_team"] == 1:
+            state.extend([0, 0, 1])
+
+        state.extend(do_flatten(np.eye(7)[first_obs_dict["game_mode"]]))
+
+        for p_i in player_ids_agent_controls:
+            state.extend(do_flatten(np.eye(len(first_obs_dict["left_team"]))[p_i]))
+
+        return np.array(state, dtype=np.float32)
+
+
 class SimpleStateWrapper(gym.ObservationWrapper):
-    """A wrapper that is similar to simple115 but remove the padding 0s"""
+    """A wrapper that is similar to simple115 but remove the padding 0s, which is actually a kind of `agent specific state` introduced in https://openreview.net/forum?id=YVXaxB6L2Pl ."""
 
     def __init__(self, env: gym.Wrapper):
         """
@@ -211,8 +284,8 @@ class SimpleStateWrapper(gym.ObservationWrapper):
         """
         gym.ObservationWrapper.__init__(self, env)
         action_shape = np.shape(self.env.action_space)
-        num_left_agents = len(list(self.env.unwrapped._env._env.config.left_team))
-        num_right_agents = len(list(self.env.unwrapped._env._env.config.right_team))
+        num_left_agents = self.env.unwrapped.engine_config.controllable_left_players
+        num_right_agents = self.env.unwrapped.engine_config.controllable_right_players
         shape = (action_shape[0] if len(action_shape) else 1, (7 * num_left_agents + 6 * num_right_agents + 18))
         self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=shape, dtype=np.float32)
 

@@ -51,6 +51,14 @@ class FootballEnv(gym.Env):
         self._cached_observation = None
 
     @property
+    def engine_config(self):
+        return self._env._env.config
+    
+    @property
+    def control_config(self):
+        return self._config        
+
+    @property
     def action_space(self):
         if self._config.number_of_players_agent_controls() > 1:
             return gym.spaces.MultiDiscrete([self._num_actions] * self._config.number_of_players_agent_controls())

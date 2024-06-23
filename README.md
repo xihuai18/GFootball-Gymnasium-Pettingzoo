@@ -30,13 +30,30 @@ It holds:
     - (x,y) direction of right team players, size n2 * 2 
     - (x,y,z) ball position
     - (Δx,Δy,Δz) ball direction
-    - one hot encoding of ball ownership (noone, left, right)
+    - one hot encoding of ball ownership (none, left, right)
     - one hot encoding of `game_mode`
     - one hot encoding of which player is active (agent id), size n1
 Total dim:
     4 * 2 + (n1-1) * 2 * 3 + n2 * 2 * 3 + 3 + 3 + 3 + n1 + 7
     = 7 * n1 + 6 * n2 + 18
+
+In 'simplev1' representation, we also provide `state` function, which holds:
+    - (x,y) coordinates of left team players
+    - (x,y) direction of left team players
+    - (x,y) coordinates of right team players
+    - (x,y) direction of right team players
+
+    - (x,y,z) - ball position
+    - (x,y,z) - ball direction
+    - (x,y,z) - one hot encoding of ball ownership (none, left, right)
+
+    - one hot encoding of `game_mode`
+    - one hot encoding of which player is active (controlled player ids)
+Total dim: 
+    4*(n1+n2) + n0*n1 + 16
 ```
+
+`n0`, `n1`, `n2` represent number of players in control, number of players in the left team, and number of players in the right team.
 
 ### Action Masks
 

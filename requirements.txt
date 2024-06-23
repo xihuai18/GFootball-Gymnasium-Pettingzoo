@@ -7,3 +7,5 @@ gymnasium
 absl-py
 wheel
 six
+pettingzoo
+supersuit

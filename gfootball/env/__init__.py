@@ -45,6 +45,7 @@ def _process_representation_wrappers(env, representation, channel_dimensions):
         env = wrappers.Simple115StateWrapper(env, True)
     elif representation == "simplev1":
         env = wrappers.SimpleStateWrapper(env)
+        env = wrappers.GlobalStateWrapper(env)
     elif representation == "extracted":
         env = wrappers.SMMWrapper(env, channel_dimensions)
     elif representation == "raw":
