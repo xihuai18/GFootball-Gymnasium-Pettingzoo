@@ -9,13 +9,16 @@ from typing import Any, Dict, List, Tuple
 import gymnasium as gym
 import numpy as np
 import pettingzoo
-from gfootball.env import create_environment
 import pettingzoo.utils
+
+from gfootball.env import create_environment
 
 
 class ParallelEnv(pettingzoo.ParallelEnv):
     """Petting ParallelEnv for Google Research Football (GRF) environment"""
+
     metadata = {}
+
     def __init__(
         self,
         env_name: str = "",

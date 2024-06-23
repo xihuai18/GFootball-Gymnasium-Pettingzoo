@@ -16,10 +16,8 @@
 
 from gymnasium.envs.registration import register
 
-from gfootball.env import scenario_builder
-
 import gfootball.gfootball_pettingzoo_v1 as gfootball_pettingzoo_v1
-from gfootball.env import create_environment
+from gfootball.env import create_environment, scenario_builder
 
 __all__ = ["gfootball_pettingzoo_v1", "create_environment"]
 

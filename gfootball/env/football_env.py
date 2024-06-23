@@ -53,10 +53,10 @@ class FootballEnv(gym.Env):
     @property
     def engine_config(self):
         return self._env._env.config
-    
+
     @property
     def control_config(self):
-        return self._config        
+        return self._config
 
     @property
     def action_space(self):
@@ -192,6 +192,7 @@ class FootballEnv(gym.Env):
         self._env.reset(game_engine_random_seed=self.np_random.integers(0, 2000000000, dtype=int))
         if seed is not None:
             import random
+
             np.random.seed(seed)
             random.seed(seed)
         for player in self._players:
