@@ -190,7 +190,10 @@ class FootballEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
         self._env.reset(game_engine_random_seed=self.np_random.integers(0, 2000000000, dtype=int))
-        # self._env.reset()
+        if seed is not None:
+            import random
+            np.random.seed(seed)
+            random.seed(seed)
         for player in self._players:
             player.reset()
         self._cached_observation = None

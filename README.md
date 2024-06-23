@@ -6,10 +6,6 @@
 
 Update `CMakeLists.txt` and make gfootball easier to install in virtual python environments.
 
-### Compatibility with Gymnasium
-
-- Modify `step` to return `terminated` and `truncated`.
-- Modify `reset` to maintain a consistent `np_random` in the environment. Refer to <https://gymnasium.farama.org/api/env/#gymnasium.Env.reset>.
 
 ### Compact Representation for Academy Scenarios
 See [gfootball/env/\_\_init\_\_.py](./gfootball/__init__.py):
@@ -57,11 +53,17 @@ Total dim:
 
 ### Action Masks
 
-Action masks based on simple rules are returned as `info["action_mask"]` by default, you can disable by passing `other_config_options={"action_mask":False})` when initializing, e.g.,
+Action masks based on simple rules are returned as `info["action_mask"]` by default, you can disable by passing `other_config_options={"action_mask":False})` when initializing.
 
-```python
-env = gym.make("GFootball/academy_3_vs_1_with_keeper-simplev1-v0", other_config_options={"action_mask":False})
-```
+
+### Compatibility with Gymnasium
+
+- Modify `step` to return `terminated` and `truncated`.
+- Modify `reset` to maintain a consistent `np_random` in the environment. Refer to <https://gymnasium.farama.org/api/env/#gymnasium.Env.reset>.
+
+### Compatibility with PettingZoo
+
+Implement pettingzoo parallel apis for gfootball, as in [gfootball/gfootball\_pettingzoo\_v1.py](gfootball/gfootball_pettingzoo_v1.py) and pass the `parallel_api_test`.
 
 ## Installation
 
@@ -88,5 +90,9 @@ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7
 
 ```shell
 export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libffi.so.7 
-python -c "import gymnasium as gym; import gfootball; env = gym.make('GFootball/academy_3_vs_1_with_keeper-simplev1-v0'); print(env.reset()); print(env.step([0]))"
+# gymnasium apis
+python -c "import gymnasium as gym; import gfootball; env = gym.make('GFootball/academy_3_vs_1_with_keeper-simplev1-v0'); print(env.reset(seed=0)); print(env.step([0]))"
+
+# pettingzoo apis
+python -c "from gfootball import gfootball_pettingzoo_v1; env = gfootball_pettingzoo_v1.parallel_env('academy_3_vs_1_with_keeper', representation='simplev1', number_of_left_players_agent_controls=2); print(env.reset(seed=0)); print(env.step({'player_0':0, 'player_1':0}))"
 ```

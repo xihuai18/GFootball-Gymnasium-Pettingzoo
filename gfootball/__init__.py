@@ -14,10 +14,14 @@
 
 """Google Research Football."""
 
-import gymnasium as gym
 from gymnasium.envs.registration import register
 
 from gfootball.env import scenario_builder
+
+import gfootball.gfootball_pettingzoo_v1 as gfootball_pettingzoo_v1
+from gfootball.env import create_environment
+
+__all__ = ["gfootball_pettingzoo_v1", "create_environment"]
 
 for env_name in scenario_builder.all_scenarios():
     register(

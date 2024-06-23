@@ -3,14 +3,19 @@ Google Research Football (GRF) environment for PettingZoo (Parallel) APIs
 
 """
 
-from gfootball.env import create_environment
+from collections.abc import Iterable
 from typing import Any, Dict, List, Tuple
 
-import pettingzoo
 import gymnasium as gym
+import numpy as np
+import pettingzoo
+from gfootball.env import create_environment
+import pettingzoo.utils
 
 
-class parallel_env(pettingzoo.ParallelEnv):
+class ParallelEnv(pettingzoo.ParallelEnv):
+    """Petting ParallelEnv for Google Research Football (GRF) environment"""
+    metadata = {}
     def __init__(
         self,
         env_name: str = "",
@@ -28,7 +33,7 @@ class parallel_env(pettingzoo.ParallelEnv):
     ):
         """Creates a Google Research Football environment.
         Args:
-        env_name: a name of a scenario to run, e.g. "11_vs_11_stochastic".
+        env_name: a name of a scenario to run, e.g. "3_vs_1_with_keeper".
             The list of scenarios can be found in directory "scenarios".
         stacked: If True, stack 4 observations, otherwise, only the last
             observation is returned by the environment.
@@ -145,6 +150,9 @@ class parallel_env(pettingzoo.ParallelEnv):
         self.possible_agents = self.agents
         self.agent_name_mapping = dict(zip(self.possible_agents, list(range(len(self.possible_agents)))))
 
+        if hasattr(self._env, "state_space"):
+            self.state_space = self._env.state_space
+
         self.observation_spaces, self.action_spaces = {}, {}
 
         assert isinstance(self._env.observation_space, gym.spaces.Box), "Observation space must be of type Box"
@@ -174,5 +182,94 @@ class parallel_env(pettingzoo.ParallelEnv):
     @property
     def num_agents(self) -> int:
         return len(self.agents)
-    
-    
+
+    def _check(self, var: Any) -> Any:
+        if not isinstance(var, Iterable):
+            var = [var] * len(self.agents)
+        return var
+
+    def step(self, actions: Dict) -> Tuple[
+        Dict,
+        Dict,
+        Dict,
+        Dict,
+        Dict,
+    ]:
+        actions_array = [actions[agent] for agent in self.agents]
+        observation_array, reward_array, terminated_array, truncated_array, info_key2array = self._env.step(
+            actions_array
+        )
+
+        reward_array = self._check(reward_array)
+        terminated_array = self._check(terminated_array)
+        truncated_array = self._check(truncated_array)
+
+        observation_dict, reward_dict, terminated_dict, truncated_dict, info_key2dict = {}, {}, {}, {}, {}
+        for agent_id, agent in enumerate(self.agents):
+            observation_dict[agent] = observation_array[agent_id]
+            reward_dict[agent] = reward_array[agent_id]
+            terminated_dict[agent] = terminated_array[agent_id]
+            truncated_dict[agent] = truncated_array[agent_id]
+            info_key2dict[agent] = {}
+
+        for k, v_array in info_key2array.items():
+            v_array = self._check(v_array)
+            for agent_id, agent in enumerate(self.agents):
+                info_key2dict[agent][k] = v_array[agent_id]
+
+        return observation_dict, reward_dict, terminated_dict, truncated_dict, info_key2dict
+
+    def reset(self, seed: int | None = None, options: Dict | None = None) -> Tuple[Dict, Dict]:
+        observation_array, info_key2array = self._env.reset(seed=seed, options=options)
+
+        observation_dict, info_key2dict = {}, {}
+        for agent_id, agent in enumerate(self.agents):
+            observation_dict[agent] = observation_array[agent_id]
+            info_key2dict[agent] = {}
+        for k, v_array in info_key2array.items():
+            v_array = self._check(v_array)
+            for agent_id, agent in enumerate(self.agents):
+                info_key2dict[agent][k] = v_array[agent_id]
+
+        return observation_dict, info_key2dict
+
+    def state(self) -> np.ndarray:
+        if hasattr(self._env, "state"):
+            return self._env.state()
+
+
+def parallel_env(
+    env_name: str = "",
+    representation: str = "simplev1",
+    rewards: str = "scoring",
+    write_goal_dumps: bool = False,
+    write_full_episode_dumps: bool = False,
+    render: bool = False,
+    write_video: bool = False,
+    dump_frequency: int = 1,
+    logdir: str = "",
+    number_of_left_players_agent_controls: int = 1,
+    number_of_right_players_agent_controls: int = 0,
+    other_config_options: dict = {},
+):
+    env = ParallelEnv(
+        env_name=env_name,
+        representation=representation,
+        rewards=rewards,
+        write_goal_dumps=write_goal_dumps,
+        write_full_episode_dumps=write_full_episode_dumps,
+        render=render,
+        write_video=write_video,
+        dump_frequency=dump_frequency,
+        logdir=logdir,
+        number_of_left_players_agent_controls=number_of_left_players_agent_controls,
+        number_of_right_players_agent_controls=number_of_right_players_agent_controls,
+        other_config_options=other_config_options,
+    )
+    aec_env = pettingzoo.utils.parallel_to_aec(env)
+    aec_env = pettingzoo.utils.OrderEnforcingWrapper(aec_env)
+    env = pettingzoo.utils.aec_to_parallel(aec_env)
+    return env
+
+
+__all__ = ["parallel_env"]
