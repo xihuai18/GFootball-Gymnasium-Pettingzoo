@@ -18,7 +18,6 @@
 from __future__ import absolute_import, division, print_function
 
 from absl import app, flags, logging
-
 from gfootball.env import config, football_env
 
 FLAGS = flags.FLAGS

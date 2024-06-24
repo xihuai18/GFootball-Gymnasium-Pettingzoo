@@ -21,9 +21,8 @@
 from __future__ import absolute_import, division, print_function
 
 import numpy
-from six.moves import range
-
 from gfootball_engine import e_BackendAction
+from six.moves import range
 
 
 class CoreAction(object):

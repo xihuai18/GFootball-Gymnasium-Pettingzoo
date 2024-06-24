@@ -17,7 +17,6 @@
 
 import numpy as np
 from absl.testing import absltest
-
 from gfootball.env import football_action_set
 
 named_action_from_action_set = football_action_set.named_action_from_action_set

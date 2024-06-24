@@ -10,7 +10,6 @@ import gymnasium as gym
 import numpy as np
 import pettingzoo
 import pettingzoo.utils
-
 from gfootball.env import create_environment
 
 

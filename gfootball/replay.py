@@ -22,7 +22,6 @@
 from __future__ import absolute_import, division, print_function
 
 from absl import app, flags
-
 from gfootball.env import script_helpers
 
 FLAGS = flags.FLAGS

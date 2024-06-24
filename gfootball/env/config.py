@@ -22,9 +22,8 @@ import os
 import platform
 import tempfile
 
-from absl import flags
-
 import gfootball_engine as libgame
+from absl import flags
 
 FLAGS = flags.FLAGS
 

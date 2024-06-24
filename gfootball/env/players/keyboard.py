@@ -16,7 +16,6 @@
 """Player with actions coming from the keyboard."""
 
 import pygame
-
 from gfootball.env import controller_base, event_queue, football_action_set
 
 KEY_TO_ACTIONS = {

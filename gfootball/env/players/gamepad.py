@@ -17,7 +17,6 @@
 
 import pygame
 from absl import logging
-
 from gfootball.env import controller_base, event_queue, football_action_set
 
 BUTTON_TO_ACTIONS = {

@@ -28,11 +28,10 @@ import traceback
 import numpy as np
 import six.moves.cPickle
 from absl import logging
-from six.moves import range, zip
-
 from gfootball.env import constants as const
 from gfootball.env import football_action_set
 from gfootball.scenarios import e_PlayerRole_GK
+from six.moves import range, zip
 
 # How many past frames are kept around for the dumps to make use of them.
 PAST_STEPS_TRACE_SIZE = 100

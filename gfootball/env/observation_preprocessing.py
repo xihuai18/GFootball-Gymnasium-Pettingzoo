@@ -20,9 +20,8 @@
 from __future__ import absolute_import, division, print_function
 
 import numpy as np
-from six.moves import range
-
 from gfootball.env import football_action_set
+from six.moves import range
 
 SMM_WIDTH = 96
 SMM_HEIGHT = 72

@@ -21,9 +21,8 @@ import pkgutil
 import random
 import sys
 
-from absl import flags, logging
-
 import gfootball_engine as libgame
+from absl import flags, logging
 
 Player = libgame.FormationEntry
 Role = libgame.e_PlayerRole

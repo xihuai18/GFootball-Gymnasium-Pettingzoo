@@ -21,13 +21,12 @@ import argparse
 import os
 import tempfile
 
+import gfootball.env as football_env
 import gymnasium as gym
 import ray
 from ray import tune
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray.tune.registry import register_env
-
-import gfootball.env as football_env
 
 parser = argparse.ArgumentParser()
 

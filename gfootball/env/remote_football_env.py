@@ -22,7 +22,6 @@ import grpc
 import gymnasium as gym
 import numpy as np
 from absl import logging
-
 from gfootball.env import football_action_set
 from gfootball.eval_server import config, utils
 from gfootball.eval_server.proto import (

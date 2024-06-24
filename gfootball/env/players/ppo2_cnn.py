@@ -26,7 +26,6 @@ import joblib
 import numpy as np
 import tensorflow.compat.v1 as tf
 from baselines.common.policies import build_policy
-
 from gfootball.env import football_action_set, observation_preprocessing, player_base
 from gfootball.examples import models
 
