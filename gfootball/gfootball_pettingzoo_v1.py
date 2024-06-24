@@ -4,7 +4,7 @@ Google Research Football (GRF) environment for PettingZoo (Parallel) APIs
 """
 
 from collections.abc import Iterable
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import gymnasium as gym
 import numpy as np

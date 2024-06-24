@@ -115,7 +115,7 @@ class ActionMaskWrapper(gym.Wrapper):
         for obs_dict in observation_dicts:
             action_mask = [1] * self.action_n
 
-            a_i = obs_dict["active"]
+            obs_dict["active"]
 
             (
                 NO_OP,
@@ -140,7 +140,7 @@ class ActionMaskWrapper(gym.Wrapper):
             ) = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18)
 
             if self.action_n == 20:
-                BUILTIN_AI = 19
+                pass
 
             if obs_dict["ball_owned_team"] == 1:  # opponents owning ball
                 (

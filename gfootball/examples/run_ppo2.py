@@ -24,7 +24,6 @@ from baselines import logger
 from baselines.bench import monitor
 from baselines.common.vec_env.subproc_vec_env import SubprocVecEnv
 from baselines.ppo2 import ppo2
-from gfootball.examples import models
 
 FLAGS = flags.FLAGS
 

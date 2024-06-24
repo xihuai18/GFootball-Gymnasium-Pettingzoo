@@ -36,7 +36,7 @@ if 'GFOOTBALL_DATA_DIR' not in os.environ:
   os.environ['GFOOTBALL_DATA_DIR'] = data_dir
 
 try:
-  from _gameplayfootball import *
+  pass
 except:
   if not (os.path.isfile(os.path.join(game_path, 'libgame.so')) and
           os.path.isfile(os.path.join(game_path, '_gameplayfootball.so'))):

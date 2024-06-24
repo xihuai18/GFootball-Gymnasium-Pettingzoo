@@ -119,7 +119,7 @@ class TextWriter(object):
         (s_x, s_y, e_x, e_y) = tuple(int(v * scale_factor) for v in arrow_offsets[arrow_type])
         start_point = (self._pos_x + s_x, self._pos_y + s_y)
         end_point = (self._pos_x + e_x, self._pos_y + e_y)
-        image = cv2.arrowedLine(self._frame, start_point, end_point, self._color, thickness)
+        cv2.arrowedLine(self._frame, start_point, end_point, self._color, thickness)
 
 
 def write_players_state(writer, players_info):
@@ -426,14 +426,13 @@ class ObservationProcessor(object):
 
     def update(self, trace):
         self._frame += 1
-        frame = trace.get("frame", None)
+        trace.get("frame", None)
         if not self._config["write_video"] and "frame" in trace["observation"]:
             # Don't record frame in the trace if we don't write video to save memory.
             no_video_trace = trace
             no_video_trace["observation"] = trace["observation"].copy()
             del no_video_trace["observation"]["frame"]
             self._state = ObservationState(no_video_trace)
-            frame = None
         else:
             self._state = ObservationState(trace)
         self._trace.append(self._state)

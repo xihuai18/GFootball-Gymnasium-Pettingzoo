@@ -1,5 +1,5 @@
 from gfootball import gfootball_pettingzoo_v1
-from pettingzoo.test import parallel_api_test, parallel_seed_test
+from pettingzoo.test import parallel_api_test
 
 env = gfootball_pettingzoo_v1.parallel_env(
     "academy_3_vs_1_with_keeper", representation="simplev1", number_of_left_players_agent_controls=1

@@ -31,13 +31,7 @@ import gfootball
 import numpy as np
 import psutil
 from absl.testing import absltest, parameterized
-from gfootball.env import (
-    config,
-    football_action_set,
-    football_env,
-    scenario_builder,
-    wrappers,
-)
+from gfootball.env import config, football_action_set, football_env, scenario_builder
 from six.moves import range
 
 fast_run = False
@@ -364,7 +358,7 @@ class FootballEnvTest(parameterized.TestCase):
         cfg = config.Config()
         for l in scenario_builder.all_scenarios():
             cfg["level"] = l
-            unused_game_cfg = cfg.ScenarioConfig()
+            cfg.ScenarioConfig()
 
     def memory_usage(self):
         process = psutil.Process(os.getpid())
@@ -444,7 +438,6 @@ class FootballEnvTest(parameterized.TestCase):
     @parameterized.parameters(range(1))
     def test_symmetry(self, seed):
         """Checks game symmetry."""
-        processes = []
         cfg1 = config.Config(
             {
                 "level": "tests.symmetric",

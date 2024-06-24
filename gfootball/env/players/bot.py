@@ -104,7 +104,7 @@ class Player(player_base.PlayerBase):
           Score of the pass.
         """
         opponent = self._closest_opponent_to_object(player)
-        dist = self._object_distance(player, opponent)
+        self._object_distance(player, opponent)
         trajectory = player - active
         dist_closest_traj = None
         for i in range(10):
