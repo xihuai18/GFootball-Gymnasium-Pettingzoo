@@ -9,6 +9,8 @@ from typing import Any, Dict, Tuple
 import gymnasium as gym
 import numpy as np
 import pettingzoo
+from pettingzoo.utils.env import AgentID
+
 from gfootball.env import create_environment
 
 
@@ -174,10 +176,10 @@ class ParallelEnv(pettingzoo.ParallelEnv):
                 )
                 self.action_spaces[agent] = gym.spaces.Discrete(self._env.action_space.nvec[agent_id])
 
-    def observation_space(self, agent: str) -> gym.Space:
+    def observation_space(self, agent: AgentID) -> gym.Space:
         return self.observation_spaces[agent]
 
-    def action_space(self, agent: str) -> gym.Space:
+    def action_space(self, agent: AgentID) -> gym.Space:
         return self.action_spaces[agent]
 
     @property
@@ -237,6 +239,7 @@ class ParallelEnv(pettingzoo.ParallelEnv):
     def state(self) -> np.ndarray:
         if hasattr(self._env.unwrapped, "state"):
             return self._env.unwrapped.state()
+        return None
 
 
 def parallel_env(
@@ -267,6 +270,10 @@ def parallel_env(
         number_of_right_players_agent_controls=number_of_right_players_agent_controls,
         other_config_options=other_config_options,
     )
+    if hasattr(env, "state_space"):
+        from co_mas.wrappers import AgentStateParallelEnvWrapper
+
+        env = AgentStateParallelEnvWrapper(env)
     aec_env = pettingzoo.utils.parallel_to_aec(env)
     aec_env = pettingzoo.utils.OrderEnforcingWrapper(aec_env)
     env = pettingzoo.utils.aec_to_parallel(aec_env)

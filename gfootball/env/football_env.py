@@ -23,6 +23,7 @@ import importlib
 import gymnasium as gym
 import numpy as np
 from absl import logging
+
 from gfootball.env import config as cfg
 from gfootball.env import (
     constants,

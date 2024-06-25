@@ -21,6 +21,7 @@ import time
 import urllib.request
 
 import grpc
+
 from gfootball.eval_server import config
 
 

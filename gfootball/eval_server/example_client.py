@@ -19,11 +19,12 @@ It creates remote football game with given credentials and plays a few games.
 
 import random
 
-import gfootball.env as football_env
 import grpc
 import numpy as np
 import tensorflow.compat.v2 as tf
 from absl import app, flags, logging
+
+import gfootball.env as football_env
 from gfootball.env import football_action_set
 
 FLAGS = flags.FLAGS

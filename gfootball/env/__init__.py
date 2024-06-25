@@ -16,10 +16,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-from gfootball.env import config, football_env, observation_preprocessing, wrappers
-import gymnasium as gym
 import types
+
+import gymnasium as gym
 import numpy as np
+
+from gfootball.env import config, football_env, observation_preprocessing, wrappers
 
 
 def _process_reward_wrappers(env, rewards):

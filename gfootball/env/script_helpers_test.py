@@ -23,6 +23,7 @@ import tempfile
 import zlib
 
 from absl.testing import absltest
+
 from gfootball.env import config, football_action_set, football_env, script_helpers
 
 test_tmpdir = os.path.join(tempfile.gettempdir(), "gfootball_test")

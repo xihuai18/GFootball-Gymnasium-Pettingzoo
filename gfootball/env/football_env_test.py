@@ -27,12 +27,13 @@ import zlib
 from collections.abc import Iterable
 from multiprocessing import Queue, pool
 
-import gfootball
 import numpy as np
 import psutil
 from absl.testing import absltest, parameterized
-from gfootball.env import config, football_action_set, football_env, scenario_builder
 from six.moves import range
+
+import gfootball
+from gfootball.env import config, football_action_set, football_env, scenario_builder
 
 fast_run = False
 

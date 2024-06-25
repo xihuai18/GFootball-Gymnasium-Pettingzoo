@@ -22,6 +22,7 @@ import os
 import tempfile
 
 import six.moves.cPickle
+
 from gfootball.env import (
     config,
     football_action_set,

@@ -15,6 +15,7 @@
 """Script allowing to render a replay video from a game dump."""
 
 from absl import app, flags
+
 from gfootball.env import script_helpers
 
 FLAGS = flags.FLAGS

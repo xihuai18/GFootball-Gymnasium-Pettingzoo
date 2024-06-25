@@ -19,6 +19,7 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from absl.testing import absltest
+
 from gfootball.env import config, football_action_set, observation_rotation
 
 

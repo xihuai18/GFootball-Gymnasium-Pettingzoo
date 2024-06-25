@@ -7,5 +7,6 @@ gymnasium
 absl-py
 wheel
 six
-pettingzoo
-supersuit
+pettingzoo>=1.24.3
+pre-commit
+git+https://github.com/xihuai18/Common-Multi-agent-Environments.git
