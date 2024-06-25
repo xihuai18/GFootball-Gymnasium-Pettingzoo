@@ -184,8 +184,15 @@ class FootballEnv(gym.Env):
             ] * self._agent.num_controlled_right_players()
         self._cached_observation = None
         info["score_reward"] = score_reward
-        # Whether truncated depends on the reward design, since default the "scoring" is used, False is returned.
-        return (self.observation(), np.array(reward, dtype=np.float32), done, False, info)
+        # Whether truncated depends on the reward design, one should rewrite carefully.
+        # NOTE: For academy scenarios, truncated if `True` the controlled team does not score, otherwise `False`.
+        truncated = False
+        if done:
+            last_obs_dict = self._env.observation()
+            if last_obs_dict["steps_left"] == 0 and last_obs_dict["score"][0] <= last_obs_dict["score"][1]:
+                truncated = True
+
+        return (self.observation(), np.array(reward, dtype=np.float32), done, truncated, info)
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
@@ -208,9 +215,6 @@ class FootballEnv(gym.Env):
                     self._cached_observation, self._agent, self._agent_left_position, self._agent_right_position
                 )
         return self._cached_observation
-
-    def state(self) -> np.ndarray:
-        pass
 
     def write_dump(self, name):
         return self._env.write_dump(name)
