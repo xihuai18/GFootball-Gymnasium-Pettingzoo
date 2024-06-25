@@ -367,7 +367,7 @@ void GameEnv::reset(ScenarioConfig& game_config, bool animations) {
   ContextHolder c(this);
   // Reset call disables tracker.
   GetTracker()->setDisabled(true);
-  context->step = -1;
+  context->step = 0;
   waiting_for_game_count = 0;
   setConfig(game_config);
   for (auto controller : GetControllers()) {

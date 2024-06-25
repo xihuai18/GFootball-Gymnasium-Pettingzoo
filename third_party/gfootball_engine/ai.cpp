@@ -68,7 +68,7 @@ class GameEnv_Python : public GameEnv {
 
   void reset_python(ScenarioConfig& game_config, bool init_animation) {
     ContextHolder c(this);
-    context->step = -1;
+    context->step = 0;
     PyThreadState* _save = NULL;
     Py_UNBLOCK_THREADS;
     GetTracker()->setDisabled(true);

@@ -51,7 +51,7 @@ Environment exposes following `raw` observations:
         - `9` - `action_dribble`
 - Match state:
     - `score` - pair of integers denoting number of goals for left and right teams, respectively.
-    - `steps_left` - how many steps are left till the end of the match.
+    - `c` - how many steps are left till the end of the match.
     - `game_mode` - current game mode, one of:
         - `0` = `e_GameMode_Normal`
         - `1` = `e_GameMode_KickOff`

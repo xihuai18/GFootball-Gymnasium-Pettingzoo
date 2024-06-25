@@ -60,6 +60,7 @@ Action masks based on simple rules are returned as `info["action_mask"]` by defa
 
 - Modify `step` to return `terminated` and `truncated`.
 - Modify `reset` to maintain a consistent `np_random` in the environment. Refer to <https://gymnasium.farama.org/api/env/#gymnasium.Env.reset>.
+- Fix the off-by-one bug: origin gfootball run 401 steps when `game_duration` is set to 400.
 
 ### Compatibility with PettingZoo
 
