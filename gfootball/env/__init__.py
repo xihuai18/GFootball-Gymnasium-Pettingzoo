@@ -17,6 +17,9 @@
 from __future__ import absolute_import, division, print_function
 
 from gfootball.env import config, football_env, observation_preprocessing, wrappers
+import gymnasium as gym
+import types
+import numpy as np
 
 
 def _process_reward_wrappers(env, rewards):
@@ -45,7 +48,6 @@ def _process_representation_wrappers(env, representation, channel_dimensions):
         env = wrappers.Simple115StateWrapper(env, True)
     elif representation == "simplev1":
         env = wrappers.SimpleStateWrapper(env)
-        env = wrappers.GlobalStateWrapper(env)
     elif representation == "extracted":
         env = wrappers.SMMWrapper(env, channel_dimensions)
     elif representation == "raw":
@@ -85,6 +87,69 @@ def _apply_output_wrappers(
     return env
 
 
+def _apply_state_wrappers(env, representation) -> gym.Wrapper | gym.Env:
+    def state_space(self):
+        num_left_agents = self.engine_config.controllable_left_players
+        num_right_agents = self.engine_config.controllable_right_players
+        shape = (
+            4 * (num_left_agents + num_right_agents)
+            + self.control_config.number_of_players_agent_controls() * num_left_agents
+            + 16,
+        )
+        state_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=shape, dtype=np.float32)
+        return state_space
+
+    def state(self) -> np.ndarray:
+        def do_flatten(obj):
+            """Run flatten on either python list or numpy array."""
+            if type(obj) == list:
+                return np.array(obj).flatten()
+            return obj.flatten()
+
+        observation_dicts = self.observation()
+        first_obs_dict = observation_dicts[0]
+        player_ids_agent_controls = np.array([obs_dict["active"] for obs_dict in observation_dicts])
+        state = []
+        # n1 * 2 - (x,y) coordinates of left team players
+        # n1 * 2 - (x,y) direction of left team players
+        # n2 * 2 - (x,y) coordinates of right team players
+        # n2 * 2 - (x,y) direction of right team players
+
+        # 3 - (x,y,z) - ball position
+        # 3 - ball direction
+        # 3 - one hot encoding of ball ownership (noone, left, right)
+
+        # 7 - one hot encoding of `game_mode`
+        # n0 * n1 - one hot encoding of which player is active  (controlled agent ids)
+        # dim: 4*(n1+n2) + n0*n1 + 16
+        state.extend(do_flatten(first_obs_dict["left_team"]))
+        state.extend(do_flatten(first_obs_dict["left_team_direction"]))
+        state.extend(do_flatten(first_obs_dict["right_team"]))
+        state.extend(do_flatten(first_obs_dict["right_team_direction"]))
+
+        state.extend(do_flatten(first_obs_dict["ball"]))
+        state.extend(do_flatten(first_obs_dict["ball_direction"]))
+        if first_obs_dict["ball_owned_team"] == -1:
+            state.extend([1, 0, 0])
+        if first_obs_dict["ball_owned_team"] == 0:
+            state.extend([0, 1, 0])
+        if first_obs_dict["ball_owned_team"] == 1:
+            state.extend([0, 0, 1])
+
+        state.extend(do_flatten(np.eye(7)[first_obs_dict["game_mode"]]))
+
+        for p_i in player_ids_agent_controls:
+            state.extend(do_flatten(np.eye(len(first_obs_dict["left_team"]))[p_i]))
+
+        return np.array(state, dtype=np.float32)
+
+    if representation in ["simplev1"]:
+        env.__class__.state_space = property(state_space)
+        env.state = types.MethodType(state, env)
+
+    return env
+
+
 def create_environment(
     env_name="",
     stacked=False,
@@ -101,7 +166,7 @@ def create_environment(
     number_of_right_players_agent_controls=0,
     channel_dimensions=(observation_preprocessing.SMM_WIDTH, observation_preprocessing.SMM_HEIGHT),
     other_config_options={},
-):
+) -> gym.Env | gym.Wrapper:
     """Creates a Google Research Football environment.
 
     Args:
@@ -236,6 +301,7 @@ def create_environment(
     c = config.Config(config_values)
 
     env = football_env.FootballEnv(c)
+    env = _apply_state_wrappers(env, representation)
     if multiagent_to_singleagent:
         env = wrappers.MultiAgentToSingleAgent(
             env, number_of_left_players_agent_controls, number_of_right_players_agent_controls
@@ -253,6 +319,7 @@ def create_environment(
         stacked,
         action_mask=c._values.get("action_mask", True),
     )
+
     return env
 
 

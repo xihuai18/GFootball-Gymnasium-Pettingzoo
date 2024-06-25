@@ -9,7 +9,6 @@ from typing import Any, Dict, Tuple
 import gymnasium as gym
 import numpy as np
 import pettingzoo
-import pettingzoo.utils
 from gfootball.env import create_environment
 
 
@@ -152,8 +151,8 @@ class ParallelEnv(pettingzoo.ParallelEnv):
         self.possible_agents = self.agents
         self.agent_name_mapping = dict(zip(self.possible_agents, list(range(len(self.possible_agents)))))
 
-        if hasattr(self._env, "state_space"):
-            self.state_space = self._env.state_space
+        if hasattr(self._env.unwrapped, "state_space"):
+            self.state_space = self._env.unwrapped.state_space
 
         self.observation_spaces, self.action_spaces = {}, {}
 
@@ -236,8 +235,8 @@ class ParallelEnv(pettingzoo.ParallelEnv):
         return observation_dict, info_key2dict
 
     def state(self) -> np.ndarray:
-        if hasattr(self._env, "state"):
-            return self._env.state()
+        if hasattr(self._env.unwrapped, "state"):
+            return self._env.unwrapped.state()
 
 
 def parallel_env(

@@ -208,6 +208,9 @@ class FootballEnv(gym.Env):
                 )
         return self._cached_observation
 
+    def state(self) -> np.ndarray:
+        pass
+
     def write_dump(self, name):
         return self._env.write_dump(name)
 
