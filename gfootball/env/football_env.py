@@ -189,7 +189,7 @@ class FootballEnv(gym.Env):
         truncated = False
         if done:
             last_obs_dict = self._env.observation()
-            if last_obs_dict["steps_left"] == 0 and last_obs_dict["score"][0] <= last_obs_dict["score"][1]:
+            if last_obs_dict["steps_left"] == 0:
                 truncated = True
 
         return (self.observation(), np.array(reward, dtype=np.float32), done, truncated, info)

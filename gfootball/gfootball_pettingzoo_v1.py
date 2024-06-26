@@ -4,11 +4,12 @@ Google Research Football (GRF) environment for PettingZoo (Parallel) APIs
 """
 
 from collections.abc import Iterable
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, List, Tuple, Type
 
 import gymnasium as gym
 import numpy as np
 import pettingzoo
+import pettingzoo.utils
 from pettingzoo.utils.env import AgentID
 
 from gfootball.env import create_environment
@@ -150,7 +151,7 @@ class ParallelEnv(pettingzoo.ParallelEnv):
 
         self.agents = [f"player_{i}" for i in range(self._control_config.number_of_players_agent_controls())]
 
-        self.possible_agents = self.agents
+        self.possible_agents = self.agents[:]
         self.agent_name_mapping = dict(zip(self.possible_agents, list(range(len(self.possible_agents)))))
 
         if hasattr(self._env.unwrapped, "state_space"):
@@ -220,11 +221,13 @@ class ParallelEnv(pettingzoo.ParallelEnv):
             for agent_id, agent in enumerate(self.agents):
                 info_key2dict[agent][k] = v_array[agent_id]
 
+        self.agents = [agent for agent in self.possible_agents if not (terminated_dict[agent] or truncated_dict[agent])]
+
         return observation_dict, reward_dict, terminated_dict, truncated_dict, info_key2dict
 
     def reset(self, seed: int | None = None, options: Dict | None = None) -> Tuple[Dict, Dict]:
         observation_array, info_key2array = self._env.reset(seed=seed, options=options)
-
+        self.agents = self.possible_agents[:]
         observation_dict, info_key2dict = {}, {}
         for agent_id, agent in enumerate(self.agents):
             observation_dict[agent] = observation_array[agent_id]
@@ -255,6 +258,7 @@ def parallel_env(
     number_of_left_players_agent_controls: int = 1,
     number_of_right_players_agent_controls: int = 0,
     other_config_options: dict = {},
+    additional_wrappers: List[Type[pettingzoo.utils.BaseParallelWrapper]] = [],
 ):
     env = ParallelEnv(
         env_name=env_name,
@@ -270,13 +274,23 @@ def parallel_env(
         number_of_right_players_agent_controls=number_of_right_players_agent_controls,
         other_config_options=other_config_options,
     )
-    if hasattr(env, "state_space"):
+    if hasattr(env, "state_space") and hasattr(env, "state"):
         from co_mas.wrappers import AgentStateParallelEnvWrapper
 
         env = AgentStateParallelEnvWrapper(env)
-    aec_env = pettingzoo.utils.parallel_to_aec(env)
-    aec_env = pettingzoo.utils.OrderEnforcingWrapper(aec_env)
-    env = pettingzoo.utils.aec_to_parallel(aec_env)
+
+    for wrapper in additional_wrappers:
+        if issubclass(wrapper, pettingzoo.utils.BaseParallelWrapper):
+            env = wrapper(env)
+        elif issubclass(wrapper, pettingzoo.utils.BaseWrapper):
+            from co_mas.wrappers import AECToParallelWrapper, ParallelToAECWrapper
+
+            aec_env = ParallelToAECWrapper(env)
+            aec_env = wrapper(aec_env)
+            env = AECToParallelWrapper(aec_env)
+        else:
+            raise ValueError(f"Unknown wrapper type: {wrapper}")
+
     return env
 
 
