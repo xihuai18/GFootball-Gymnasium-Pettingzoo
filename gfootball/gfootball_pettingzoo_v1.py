@@ -244,6 +244,9 @@ class ParallelEnv(pettingzoo.ParallelEnv):
             return self._env.unwrapped.state()
         return None
 
+    def close(self):
+        self._env.close()
+
 
 def parallel_env(
     env_name: str = "",
