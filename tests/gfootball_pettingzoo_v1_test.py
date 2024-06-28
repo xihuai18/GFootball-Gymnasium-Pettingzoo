@@ -13,11 +13,11 @@ env = gfootball_pettingzoo_v1.parallel_env(
 )
 parallel_api_test(env, 400)
 
+# Seed Tests
 env1 = gfootball_pettingzoo_v1.parallel_env(
     "academy_3_vs_1_with_keeper", representation="simplev1", number_of_left_players_agent_controls=2
 )
 
-# Seed Tests
 obs1_list = []
 obs1, info1 = env1.reset(seed=42)
 obs1_list.append(obs1)

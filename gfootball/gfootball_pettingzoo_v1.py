@@ -262,7 +262,7 @@ def parallel_env(
     number_of_right_players_agent_controls: int = 0,
     other_config_options: dict = {},
     additional_wrappers: List[Type[pettingzoo.utils.BaseParallelWrapper]] = [],
-):
+) -> ParallelEnv:
     env = ParallelEnv(
         env_name=env_name,
         representation=representation,
