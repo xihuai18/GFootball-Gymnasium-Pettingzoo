@@ -68,6 +68,7 @@ Implement pettingzoo parallel apis for gfootball, as in [gfootball/gfootball\_pe
 
 ## Installation
 
+### Dependency
 ```shell
 # system dependence
 sudo apt-get install git cmake build-essential libgl1-mesa-dev libsdl2-dev \
@@ -76,9 +77,21 @@ libdirectfb-dev libst-dev mesa-utils xvfb x11vnc
 # pip dependence
 pip install -U pip setuptools psutil wheel
 conda install anaconda::py-boost -y
-# install gfootball
-pip install git+https://github.com/xihuai18/gfootball-gymnasium.git
 ```
+
+### Install gfootball
+#### 1. PyPi from sources
+```shell
+pip install git+https://github.com/xihuai18/GFootball-Gymnasium-Pettingzoo.git
+```
+#### 2. install from GitHub sources
+```shell
+git clone https://github.com/xihuai18/GFootball-Gymnasium-Pettingzoo.git
+cd GFootball-Gymnasium-Pettingzoo
+pip install -r requirements.txt
+pip install .
+```
+
 Other installation problems may be found in the original [README](https://github.com/google-research/football).
 
 `libffi.so.7` may not be included in your environment variables, adding it before running gfootball.
