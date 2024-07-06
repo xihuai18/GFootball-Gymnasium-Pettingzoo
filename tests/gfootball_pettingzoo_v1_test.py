@@ -1,4 +1,5 @@
-from pettingzoo.test import parallel_api_test
+from co_mas.test.parallel_api import parallel_api_test, sample_action
+from loguru import logger
 
 from gfootball import gfootball_pettingzoo_v1
 
@@ -23,11 +24,15 @@ obs1, info1 = env1.reset(seed=42)
 obs1_list.append(obs1)
 
 while True:
-    obs1, _, terminated1, _, _ = env1.step({agent: env1.action_space(agent).sample() for agent in env1.agents})
+    obs1, _, terminated1, _, info1 = env1.step(
+        {agent: sample_action(agent, obs1[agent], info1[agent], env1.action_space(agent)) for agent in env1.agents}
+    )
     obs1_list.append(obs1)
 
     if any(terminated1.values()):
         break
+
+env1.close()
 
 env2 = gfootball_pettingzoo_v1.parallel_env(
     "academy_3_vs_1_with_keeper", representation="simplev1", number_of_left_players_agent_controls=2
@@ -43,11 +48,12 @@ while True:
 
     if any(terminated2.values()):
         break
+env2.close()
 
 for i, (obs1, obs2) in enumerate(zip(obs1_list, obs2_list)):
     assert all(obs1[agent] == obs2[agent] for agent in env1.agents), f"Observations at step {i} differ: {obs1} {obs2}"
 
-print("Seed test passed!")
+logger.success("Seed test passed!")
 
 # Wrapper Tests
 from co_mas.wrappers import AutoResetParallelEnvWrapper, OrderForcingParallelEnvWrapper
@@ -63,7 +69,7 @@ try:
     env.step({agent: env.action_space(agent).sample() for agent in env.agents})
 except Exception as e:
     assert str(e) == "Environment must be reset before stepping", e
-    print("Order Forcing Test Passed!")
+    logger.success("Order Forcing Test Passed!")
 else:
     raise AssertionError("Expected reset error")
 
@@ -87,6 +93,7 @@ _, _, terminated, _, _ = env.step({agent: env.action_space(agent).sample() for a
 
 assert terminated != {agent: True for agent in env.agents}
 
-print("Auto Reset Test Passed!")
+logger.success("Auto Reset Test Passed!")
 
-print("Wrapper Test Passed!")
+logger.success("Wrapper Test Passed!")
+env.close()
