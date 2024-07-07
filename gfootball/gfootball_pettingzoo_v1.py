@@ -262,8 +262,17 @@ def parallel_env(
     number_of_right_players_agent_controls: int = 0,
     other_config_options: dict = {},
     order_forcing: bool = True,
+    agent_state: bool = True,
     additional_wrappers: List[Type[pettingzoo.utils.BaseParallelWrapper]] = [],
 ) -> ParallelEnv:
+    """
+    Parameters
+    ----------
+    order_forcing : bool
+        Whether to use the OrderForcingParallelEnvWrapper.
+    agent_state : bool
+        Whether to use the AgentStateParallelEnvWrapper, if possible.
+    """
     env = ParallelEnv(
         env_name=env_name,
         representation=representation,
@@ -278,10 +287,12 @@ def parallel_env(
         number_of_right_players_agent_controls=number_of_right_players_agent_controls,
         other_config_options=other_config_options,
     )
-    if hasattr(env, "state_space") and hasattr(env, "state"):
+    if agent_state and hasattr(env, "state_space") and hasattr(env, "state"):
         from co_mas.wrappers import AgentStateParallelEnvWrapper
 
-        env = AgentStateParallelEnvWrapper(env)
+        if not any(issubclass(wrapper, AgentStateParallelEnvWrapper) for wrapper in additional_wrappers):
+
+            env = AgentStateParallelEnvWrapper(env)
 
     from co_mas.wrappers import OrderForcingParallelEnvWrapper
 
