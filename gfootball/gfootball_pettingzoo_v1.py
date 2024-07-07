@@ -165,8 +165,8 @@ class ParallelEnv(pettingzoo.ParallelEnv):
         ), "action space must be of type Discrete or MultiDiscrete"
 
         if len(self.agents) == 1:
-            self.observation_spaces = {self.agents[0]: self._env.observation_space}
-            self.action_spaces = {self.agents[0]: self._env.action_space}
+            self.observation_spaces = gym.spaces.Dict({self.agents[0]: self._env.observation_space})
+            self.action_spaces = gym.spaces.Dict({self.agents[0]: self._env.action_space})
         else:
             for agent_id, agent in enumerate(self.agents):
                 self.observation_spaces[agent] = gym.spaces.Box(
@@ -176,6 +176,8 @@ class ParallelEnv(pettingzoo.ParallelEnv):
                     dtype=self._env.observation_space.dtype,
                 )
                 self.action_spaces[agent] = gym.spaces.Discrete(self._env.action_space.nvec[agent_id])
+            self.observation_spaces = gym.spaces.Dict(self.observation_spaces)
+            self.action_spaces = gym.spaces.Dict(self.action_spaces)
 
     def observation_space(self, agent: AgentID) -> gym.Space:
         return self.observation_spaces[agent]
