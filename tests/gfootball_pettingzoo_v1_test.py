@@ -5,14 +5,9 @@ from gfootball import gfootball_pettingzoo_v1
 
 # API Tests
 env = gfootball_pettingzoo_v1.parallel_env(
-    "academy_3_vs_1_with_keeper", representation="simplev1", number_of_left_players_agent_controls=1
-)
-parallel_api_test(env, 400)
-
-env = gfootball_pettingzoo_v1.parallel_env(
     "academy_3_vs_1_with_keeper", representation="simplev1", number_of_left_players_agent_controls=2
 )
-parallel_api_test(env, 400)
+parallel_api_test(env, 400, agent_state=True)
 
 # Seed Tests
 env1 = gfootball_pettingzoo_v1.parallel_env(

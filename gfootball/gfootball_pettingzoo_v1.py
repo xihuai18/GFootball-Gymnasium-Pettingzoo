@@ -223,7 +223,7 @@ class ParallelEnv(pettingzoo.ParallelEnv):
             for agent_id, agent in enumerate(self.agents):
                 info_key2dict[agent][k] = v_array[agent_id]
 
-        self.agents = [agent for agent in self.possible_agents if not (terminated_dict[agent] or truncated_dict[agent])]
+        self.agents = [agent for agent in self.agents if not (terminated_dict[agent] or truncated_dict[agent])]
 
         return observation_dict, reward_dict, terminated_dict, truncated_dict, info_key2dict
 
