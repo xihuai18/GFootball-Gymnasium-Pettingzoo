@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,7 +28,7 @@ def get_random_string(length=10, append_timestamp=True):
     characters = string.ascii_lowercase + string.ascii_uppercase + string.digits
     res = "".join(random.choice(characters) for i in range(length))
     if append_timestamp:
-        res += "_{}".format(int(time.time()))
+        res += f"_{int(time.time())}"
     return res
 
 
@@ -46,4 +45,4 @@ def get_master_address(track="default"):
     # content of the file.
     response = urllib.request.urlopen(config.master_address_public_path + "_" + track + "?" + get_random_string())
     ip = response.read().decode("utf-8").strip()
-    return "{}:{}".format(ip, config.grpc_port)
+    return f"{ip}:{config.grpc_port}"

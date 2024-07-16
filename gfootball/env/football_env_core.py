@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Football environment as close as possible to a GYM environment."""
 
-from __future__ import absolute_import, division, print_function
 
 import copy
 
@@ -30,7 +28,6 @@ import timeit
 
 import numpy as np
 import six.moves.cPickle
-from six.moves import range
 
 from gfootball.env import config, football_action_set, observation_processor
 
@@ -44,7 +41,7 @@ except ImportError:
     import cv2
 
 
-class EnvState(object):
+class EnvState:
 
     def __init__(self):
         self.previous_score_diff = 0
@@ -52,7 +49,7 @@ class EnvState(object):
         self.prev_ball_owned_team = -1
 
 
-class FootballEnvCore(object):
+class FootballEnvCore:
 
     def __init__(self, config: config.Config):
         global _unused_engines
@@ -346,13 +343,13 @@ class FootballEnvCore(object):
                 designated_player = id
         result[name] = np.reshape(np.array(positions), [-1, 2])
         # Players' movement direction represented as [x, y] distance per step.
-        result["{}_direction".format(name)] = np.reshape(np.array(directions), [-1, 2])
+        result[f"{name}_direction"] = np.reshape(np.array(directions), [-1, 2])
         # Players' tired factor in the range [0, 1] (0 means not tired).
-        result["{}_tired_factor".format(name)] = np.array(tired_factors)
-        result["{}_active".format(name)] = np.array(active)
-        result["{}_yellow_card".format(name)] = np.array(yellow_cards)
-        result["{}_roles".format(name)] = np.array(roles)
-        result["{}_designated_player".format(name)] = designated_player
+        result[f"{name}_tired_factor"] = np.array(tired_factors)
+        result[f"{name}_active"] = np.array(active)
+        result[f"{name}_yellow_card"] = np.array(yellow_cards)
+        result[f"{name}_roles"] = np.array(roles)
+        result[f"{name}_designated_player"] = designated_player
 
     def observation(self):
         """Returns the current observation of the game."""

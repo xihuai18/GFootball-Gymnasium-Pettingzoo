@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from __future__ import absolute_import, division, print_function
 
 import logging
 import os
@@ -44,6 +41,6 @@ except:
     ):
         logging.warning("Looks like game engine is not compiled, please run:")
         engine_path = os.path.abspath(os.path.dirname(__file__))
-        logging.warning("  pushd {} && cmake . && make -j `nproc` && popd".format(game_path))
+        logging.warning(f"  pushd {game_path} && cmake . && make -j `nproc` && popd")
         logging.warning("  pushd {} && ln -s libgame.so " "_gameplayfootball.so && popd".format(engine_path))
     raise

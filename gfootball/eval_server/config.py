@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +16,7 @@
 grpc_port = 50000
 master_address_bucket = "grf_public"
 master_address_file = "eval_server_master_ip"
-master_address_public_path = "https://storage.googleapis.com/{}/{}".format(master_address_bucket, master_address_file)
+master_address_public_path = f"https://storage.googleapis.com/{master_address_bucket}/{master_address_file}"
 game_version = "2.0"
 
 track_to_num_controlled_players = {

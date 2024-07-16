@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Football environment E2E test."""
 
-from __future__ import absolute_import, division, print_function
 
 import atexit
 import os
@@ -30,7 +28,6 @@ from multiprocessing import Queue, pool
 import numpy as np
 import psutil
 from absl.testing import absltest, parameterized
-from six.moves import range
 
 import gfootball
 from gfootball.env import config, football_action_set, football_env, scenario_builder
@@ -480,7 +477,7 @@ class FootballEnvTest(parameterized.TestCase):
         cfg = config.Config(
             {
                 "level": "tests.offside_test",
-                "players": ["agent:{}_players=1".format(team2)],
+                "players": [f"agent:{team2}_players=1"],
                 "episode_number": episode,
                 "reverse_team_processing": reverse,
             }

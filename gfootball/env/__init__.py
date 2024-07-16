@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +13,6 @@
 
 """GFootball Environment."""
 
-from __future__ import absolute_import, division, print_function
 
 import types
 
@@ -55,7 +53,7 @@ def _process_representation_wrappers(env, representation, channel_dimensions):
     elif representation == "raw":
         pass
     else:
-        raise ValueError("Unsupported representation: {}".format(representation))
+        raise ValueError(f"Unsupported representation: {representation}")
     return env
 
 

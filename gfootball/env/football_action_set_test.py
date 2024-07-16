@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,7 +58,7 @@ class FootballActionSetTest(absltest.TestCase):
                     reverse = football_action_set.disable_action(action)
                     self.assertTrue(
                         reverse in action_set,
-                        "Action {} has no release action in action set {}".format(action._name, i),
+                        f"Action {action._name} has no release action in action set {i}",
                     )
 
 

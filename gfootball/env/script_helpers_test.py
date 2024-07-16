@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Script helpers test."""
 
-from __future__ import absolute_import, division, print_function
 
 import glob
 import os
@@ -41,7 +39,7 @@ class ScriptHelpersTest(absltest.TestCase):
                 "level": "tests.corner_test",
                 "dump_full_episodes": True,
                 "players": [
-                    "agent:left_players={}".format(left_players),
+                    f"agent:left_players={left_players}",
                     "bot:right_players=1",
                     "lazy:right_players=1",
                 ],

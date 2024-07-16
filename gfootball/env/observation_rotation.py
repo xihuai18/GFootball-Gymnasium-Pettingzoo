@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +20,6 @@ is to rotate the observation by 180 degrees and pass this representation
 to the agent.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
@@ -81,21 +79,19 @@ def rotate_sticky_actions(sticky_actions_state, config):
 
 def flip_team_observation(observation, result, config, from_team, to_team):
     """Rotates team-specific observations."""
-    result["{}_team".format(to_team)] = rotate_points(observation["{}_team".format(from_team)])
-    result["{}_team_direction".format(to_team)] = rotate_points(observation["{}_team_direction".format(from_team)])
-    result["{}_team_tired_factor".format(to_team)] = observation["{}_team_tired_factor".format(from_team)]
-    result["{}_team_active".format(to_team)] = observation["{}_team_active".format(from_team)]
-    result["{}_team_yellow_card".format(to_team)] = observation["{}_team_yellow_card".format(from_team)]
-    result["{}_team_roles".format(to_team)] = observation["{}_team_roles".format(from_team)]
-    result["{}_team_active".format(to_team)] = observation["{}_team_active".format(from_team)]
-    result["{}_team_designated_player".format(to_team)] = observation["{}_team_designated_player".format(from_team)]
-    if "{}_agent_controlled_player".format(from_team) in observation:
-        result["{}_agent_controlled_player".format(to_team)] = observation[
-            "{}_agent_controlled_player".format(from_team)
-        ]
-    if "{}_agent_sticky_actions".format(from_team) in observation:
-        result["{}_agent_sticky_actions".format(to_team)] = [
-            rotate_sticky_actions(sticky, config) for sticky in observation["{}_agent_sticky_actions".format(from_team)]
+    result[f"{to_team}_team"] = rotate_points(observation[f"{from_team}_team"])
+    result[f"{to_team}_team_direction"] = rotate_points(observation[f"{from_team}_team_direction"])
+    result[f"{to_team}_team_tired_factor"] = observation[f"{from_team}_team_tired_factor"]
+    result[f"{to_team}_team_active"] = observation[f"{from_team}_team_active"]
+    result[f"{to_team}_team_yellow_card"] = observation[f"{from_team}_team_yellow_card"]
+    result[f"{to_team}_team_roles"] = observation[f"{from_team}_team_roles"]
+    result[f"{to_team}_team_active"] = observation[f"{from_team}_team_active"]
+    result[f"{to_team}_team_designated_player"] = observation[f"{from_team}_team_designated_player"]
+    if f"{from_team}_agent_controlled_player" in observation:
+        result[f"{to_team}_agent_controlled_player"] = observation[f"{from_team}_agent_controlled_player"]
+    if f"{from_team}_agent_sticky_actions" in observation:
+        result[f"{to_team}_agent_sticky_actions"] = [
+            rotate_sticky_actions(sticky, config) for sticky in observation[f"{from_team}_agent_sticky_actions"]
         ]
 
 

@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,14 +17,13 @@
 # ***** List of core actions *****
 # Only add new ones, do not reorder so the numbering do not change.
 
-from __future__ import absolute_import, division, print_function
 
 import numpy
 
 from gfootball_engine import e_BackendAction
 
 
-class CoreAction(object):
+class CoreAction:
 
     def __init__(self, backend_action, name, sticky=False, directional=False):
         self._backend_action = backend_action
@@ -203,7 +201,7 @@ def named_action_from_action_set(action_set, action):
         assert action < len(action_set), "Action outside of action set"
         return action_set[action]
 
-    assert False, "Action {} not found in action set".format(action)
+    assert False, f"Action {action} not found in action set"
 
 
 def disable_action(action):

@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,7 +39,7 @@ class CustomBuild(build_ext):
             self.run_windows()
         else:
             self.run_unix()
-        super(CustomBuild, self).run()
+        super().run()
 
     def run_unix(self):
         if os.path.exists(self.build_lib):

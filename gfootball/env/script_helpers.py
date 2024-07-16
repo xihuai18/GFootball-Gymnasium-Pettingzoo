@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Set of functions used by command line scripts."""
 
-from __future__ import absolute_import, division, print_function
 
 import copy
 import os
@@ -31,7 +29,7 @@ from gfootball.env import (
 )
 
 
-class ScriptHelpers(object):
+class ScriptHelpers:
     """Set of methods used by command line scripts."""
 
     def __init__(self):
@@ -41,7 +39,7 @@ class ScriptHelpers(object):
         """Adopt replay to the new framerate and add additional steps at the end."""
         trace = []
         min_fps = replay[0]["debug"]["config"]["physics_steps_per_frame"]
-        assert fps % min_fps == 0, "Trace has to be rendered in framerate being multiple of {}".format(min_fps)
+        assert fps % min_fps == 0, f"Trace has to be rendered in framerate being multiple of {min_fps}"
         assert fps <= 100, "Framerate of up to 100 is supported"
         empty_steps = int(fps / min_fps) - 1
         for f in replay:
@@ -58,8 +56,8 @@ class ScriptHelpers(object):
     def __build_players(self, dump_file, spec):
         players = []
         for player in spec:
-            players.extend(["replay:path={},left_players=1".format(dump_file)] * config.count_left_players(player))
-            players.extend(["replay:path={},right_players=1".format(dump_file)] * config.count_right_players(player))
+            players.extend([f"replay:path={dump_file},left_players=1"] * config.count_left_players(player))
+            players.extend([f"replay:path={dump_file},right_players=1"] * config.count_right_players(player))
         return players
 
     def load_dump(self, dump_file):

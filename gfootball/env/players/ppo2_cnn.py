@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -82,7 +81,7 @@ def _load_variables(load_path, sess, prefix="", remove_prefix=True):
     sess.run(restores)
 
 
-class ObservationStacker(object):
+class ObservationStacker:
     """Utility class that produces stacked observations."""
 
     def __init__(self, stacking):
@@ -101,7 +100,7 @@ class ObservationStacker(object):
         self._data = []
 
 
-class DummyEnv(object):
+class DummyEnv:
     # We need env object to pass to build_policy, however real environment
     # is not there yet.
 

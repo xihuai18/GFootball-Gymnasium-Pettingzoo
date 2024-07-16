@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,31 +22,31 @@ __all__ = ["gfootball_pettingzoo_v1", "create_environment"]
 
 for env_name in scenario_builder.all_scenarios():
     register(
-        id="GFootball/{env_name}-SMM-v0".format(env_name=env_name),
+        id=f"GFootball/{env_name}-SMM-v0",
         entry_point="gfootball.env:create_environment",
         kwargs={"env_name": env_name, "representation": "extracted"},
     )
 
     register(
-        id="GFootball/{env_name}-Pixels-v0".format(env_name=env_name),
+        id=f"GFootball/{env_name}-Pixels-v0",
         entry_point="gfootball.env:create_environment",
         kwargs={"env_name": env_name, "representation": "pixels"},
     )
 
     register(
-        id="GFootball/{env_name}-simple115-v0".format(env_name=env_name),
+        id=f"GFootball/{env_name}-simple115-v0",
         entry_point="gfootball.env:create_environment",
         kwargs={"env_name": env_name, "representation": "simple115"},
     )
 
     register(
-        id="GFootball/{env_name}-simple115v2-v0".format(env_name=env_name),
+        id=f"GFootball/{env_name}-simple115v2-v0",
         entry_point="gfootball.env:create_environment",
         kwargs={"env_name": env_name, "representation": "simple115v2"},
     )
 
     register(
-        id="GFootball/{env_name}-simplev1-v0".format(env_name=env_name),
+        id=f"GFootball/{env_name}-simplev1-v0",
         entry_point="gfootball.env:create_environment",
         kwargs={"env_name": env_name, "representation": "simplev1"},
     )

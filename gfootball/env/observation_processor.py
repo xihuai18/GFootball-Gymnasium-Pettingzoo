@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Observation processor, providing multiple support methods for analyzing observations."""
 
-from __future__ import absolute_import, division, print_function
 
 import collections
 import datetime
@@ -28,7 +26,6 @@ import traceback
 import numpy as np
 import six.moves.cPickle
 from absl import logging
-from six.moves import range, zip
 
 from gfootball.env import constants as const
 from gfootball.env import football_action_set
@@ -45,7 +42,7 @@ except ImportError:
     import cv2
 
 
-class DumpConfig(object):
+class DumpConfig:
 
     def __init__(self, max_count=1, steps_before=PAST_STEPS_TRACE_SIZE, steps_after=0, min_frequency=10):
         self._steps_before = steps_before
@@ -58,7 +55,7 @@ class DumpConfig(object):
         self._min_frequency = min_frequency
 
 
-class TextWriter(object):
+class TextWriter:
 
     def __init__(self, frame, x, y=0, field_coords=False, color=(255, 255, 255)):
         self._frame = frame
@@ -176,7 +173,7 @@ def softmax(x):
     return np.exp(x) / np.sum(np.exp(x), axis=0)
 
 
-class ActiveDump(object):
+class ActiveDump:
 
     def __init__(self, name, finish_step, config):
         self._name = name
@@ -292,7 +289,7 @@ class ActiveDump(object):
                     probs = softmax(o._trace["debug"]["logits"])
                     action_set = football_action_set.get_action_set(self._config)
                     for action, prob in zip(action_set, probs):
-                        writer.write("%s: %.5f" % (action.name, prob), scale_factor=0.5)
+                        writer.write(f"{action.name}: {prob:.5f}", scale_factor=0.5)
                 for d in o._debugs:
                     writer.write(d)
             self._video_writer.write(frame)
@@ -321,7 +318,7 @@ class ActiveDump(object):
                 # For some reason sometimes the file is missing, so the code fails.
                 if WRITE_FILES:
                     shutil.move(self._video_tmp, self._name + self._video_suffix)
-                dump_info["video"] = "%s%s" % (self._name, self._video_suffix)
+                dump_info["video"] = f"{self._name}{self._video_suffix}"
                 logging.info("Video written to %s%s", self._name, self._video_suffix)
             except:
                 logging.error(traceback.format_exc())
@@ -336,7 +333,7 @@ class ActiveDump(object):
         return dump_info
 
 
-class ObservationState(object):
+class ObservationState:
 
     def __init__(self, trace):
         # Observations
@@ -374,7 +371,7 @@ class ObservationState(object):
         self._additional_frames.append(frame)
 
 
-class ObservationProcessor(object):
+class ObservationProcessor:
 
     def __init__(self, config):
         # Const. configuration

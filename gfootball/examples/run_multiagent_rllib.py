@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 """A simple example of setting up a multi-agent version of GFootball with rllib.
 """
 
-from __future__ import absolute_import, division, print_function
 
 import argparse
 import os
@@ -104,7 +102,7 @@ if __name__ == "__main__":
         return (None, obs_space, act_space, {})
 
     # Setup PPO with an ensemble of `num_policies` different policies
-    policies = {"policy_{}".format(i): gen_policy(i) for i in range(args.num_policies)}
+    policies = {f"policy_{i}": gen_policy(i) for i in range(args.num_policies)}
     policy_ids = list(policies.keys())
 
     tune.run(

@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,7 +35,7 @@ CONNECTION_TRIALS = 20
 
 
 # This config is needed in order to run various env wrappers.
-class FakeConfig(object):
+class FakeConfig:
     """An immitation of Config with the set of fields necessary to run wrappers."""
 
     def __init__(self, num_players):

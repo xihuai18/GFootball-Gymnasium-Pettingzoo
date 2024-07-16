@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Config loader."""
 
-from __future__ import print_function
 
 import copy
 import os
@@ -75,7 +73,7 @@ def get_agent_number_of_players(players):
     return sum([count_players(player) for player in players if player.startswith("agent")])
 
 
-class Config(object):
+class Config:
 
     def __init__(self, values=None):
         self._values = {

@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,7 +44,7 @@ def all_scenarios():
     return scenarios
 
 
-class Scenario(object):
+class Scenario:
 
     def __init__(self, config):
         # Game config controls C++ engine and is derived from the main config.

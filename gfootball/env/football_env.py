@@ -1,4 +1,3 @@
-# coding=utf-8
 # Copyright 2019 Google LLC
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +14,6 @@
 
 """Allows different types of players to play against each other."""
 
-from __future__ import absolute_import, division, print_function
 
 import copy
 import importlib
@@ -70,13 +68,13 @@ class FootballEnv(gym.Env):
         right_position = 0
         for definition in definitions:
             (name, d) = cfg.parse_player_definition(definition)
-            config_name = "player_{}".format(name)
+            config_name = f"player_{name}"
             if config_name in config:
                 config[config_name] += 1
             else:
                 config[config_name] = 0
             try:
-                player_factory = importlib.import_module("gfootball.env.players.{}".format(name))
+                player_factory = importlib.import_module(f"gfootball.env.players.{name}")
             except ImportError as e:
                 logging.error('Failed loading player "%s"', name)
                 logging.error(e)
@@ -174,7 +172,7 @@ class FootballEnv(gym.Env):
         if self._agent:
             self._agent.set_action(action)
         else:
-            assert len(action) == 0, "step() received {} actions, but no agent is playing.".format(len(action))
+            assert len(action) == 0, f"step() received {len(action)} actions, but no agent is playing."
 
         _, reward, done, info = self._env.step(self._get_actions())
         score_reward = reward
